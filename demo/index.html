@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#33505a" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>Capability Flow — Demo</title>
+<style>
+  :root{
+    --accent:#33505a; --accent2:#5a7d80;
+    --bg:#f2f2f7; --card:#ffffff; --card2:#fbfbfd;
+    --text:#1c1c1e; --text2:#6c6c70; --text3:#a0a0a6;
+    --sep:rgba(60,60,67,.18); --fill:rgba(120,120,128,.12);
+    --lead:#345c4d; --support:#456680; --inform:#8c804d; --receive:#727278;
+    --warn:#b5651d;
+    --tabbar:rgba(249,249,251,.92);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --accent:#5a8087; --accent2:#6e9398;
+      --bg:#000000; --card:#1c1c1e; --card2:#161618;
+      --text:#ffffff; --text2:#9b9ba0; --text3:#6c6c70;
+      --sep:rgba(84,84,88,.5); --fill:rgba(120,120,128,.2);
+      --lead:#5a937c; --support:#6e93b8; --inform:#b5a76b; --receive:#9a9aa0;
+      --warn:#d68a3f;
+      --tabbar:rgba(22,22,24,.9);
+    }
+  }
+  [data-theme="light"]{
+    --accent:#33505a; --accent2:#5a7d80; --bg:#f2f2f7; --card:#fff; --card2:#fbfbfd;
+    --text:#1c1c1e; --text2:#6c6c70; --text3:#a0a0a6; --sep:rgba(60,60,67,.18);
+    --fill:rgba(120,120,128,.12); --lead:#345c4d; --support:#456680; --inform:#8c804d;
+    --receive:#727278; --warn:#b5651d; --tabbar:rgba(249,249,251,.92);
+  }
+  [data-theme="dark"]{
+    --accent:#5a8087; --accent2:#6e9398; --bg:#000; --card:#1c1c1e; --card2:#161618;
+    --text:#fff; --text2:#9b9ba0; --text3:#6c6c70; --sep:rgba(84,84,88,.5);
+    --fill:rgba(120,120,128,.2); --lead:#5a937c; --support:#6e93b8; --inform:#b5a76b;
+    --receive:#9a9aa0; --warn:#d68a3f; --tabbar:rgba(22,22,24,.9);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--text); overscroll-behavior-y:none;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  #app{max-width:520px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+
+  /* Nav bar */
+  .navbar{
+    flex:0 0 auto; padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;
+    display:flex;align-items:center;gap:8px;
+    background:var(--tabbar);backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-bottom:.5px solid var(--sep); position:relative;z-index:5;
+  }
+  .navbar .title{flex:1;text-align:center;font-size:17px;font-weight:600;}
+  .navbtn{font-size:16px;color:var(--accent);min-width:40px;display:flex;align-items:center;gap:3px;}
+  .navbtn.right{justify-content:flex-end;}
+  .navbtn.back{font-weight:400;}
+
+  /* Scroll area */
+  .scroll{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;}
+  .scroll.flush{padding:0;}
+
+  /* Tab bar */
+  .tabbar{
+    flex:0 0 auto;display:flex;justify-content:space-around;
+    padding:6px 4px calc(env(safe-area-inset-bottom) + 6px);
+    background:var(--tabbar);backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-top:.5px solid var(--sep);z-index:5;
+  }
+  .tab{flex:1;text-align:center;color:var(--text3);font-size:10px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .tab .ic{font-size:20px;line-height:1;}
+  .tab.active{color:var(--accent);}
+
+  /* Cards & components */
+  .card{background:var(--card);border:.5px solid var(--sep);border-radius:14px;padding:16px;margin-bottom:12px;}
+  .h1{font-size:30px;font-weight:800;letter-spacing:-.5px;margin:0 0 2px;}
+  .sub{color:var(--text2);font-size:14px;}
+  h2.sec{font-size:18px;font-weight:700;margin:18px 0 10px;}
+  h3{font-size:16px;font-weight:600;margin:0 0 8px;display:flex;align-items:center;gap:6px;}
+  h3 .ic{color:var(--accent);}
+  .muted{color:var(--text2);font-size:13px;}
+  .tiny{font-size:11px;color:var(--text3);}
+  .badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;background:color-mix(in srgb,var(--accent) 16%, transparent);color:var(--accent);}
+  .chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;padding:6px 10px;border-radius:20px;background:var(--fill);color:var(--text2);margin:0 6px 6px 0;}
+  .chip.link{background:color-mix(in srgb,var(--accent) 15%, transparent);color:var(--accent);}
+  .bullet{display:flex;gap:8px;font-size:14px;margin:6px 0;}
+  .bullet .dot{color:var(--accent);}
+  .row{display:flex;align-items:center;gap:12px;}
+  .arrow{color:var(--text3);margin-left:auto;}
+  .tap{cursor:pointer;}
+  .tap:active{opacity:.6;}
+
+  /* Big home cards */
+  .bigcard{display:flex;align-items:center;gap:14px;background:var(--card);border:.5px solid var(--sep);border-radius:16px;padding:16px;margin-bottom:12px;width:100%;text-align:left;}
+  .bigcard .glyph{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex:0 0 auto;}
+  .bigcard .t{font-weight:600;font-size:16px;}
+  .bigcard .d{font-size:12px;color:var(--text2);margin-top:2px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .smallcard{background:var(--card);border:.5px solid var(--sep);border-radius:12px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:84px;justify-content:center;text-align:center;}
+  .smallcard .ic{font-size:22px;color:var(--accent);}
+  .smallcard .t{font-size:13px;font-weight:500;}
+  .keyidea{background:var(--card);border:.5px solid var(--sep);border-radius:14px;padding:16px;}
+  .caveat{display:flex;gap:8px;background:color-mix(in srgb,var(--warn) 12%,transparent);border-radius:10px;padding:12px;font-size:12px;color:var(--text2);}
+
+  /* Timeline */
+  .tl{display:flex;gap:14px;}
+  .tl .col{display:flex;flex-direction:column;align-items:center;}
+  .tl .num{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .tl .line{width:2px;flex:1;background:color-mix(in srgb,var(--accent) 30%,transparent);min-height:18px;}
+  .tl .body{padding-bottom:18px;flex:1;}
+  .tl .body .t{font-weight:600;font-size:16px;}
+  .tl .body .d{font-size:12.5px;color:var(--text2);margin-top:3px;}
+
+  /* Filter chips row */
+  .filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;-webkit-overflow-scrolling:touch;}
+  .filters::-webkit-scrollbar{display:none;}
+  .fchip{flex:0 0 auto;font-size:12px;font-weight:500;padding:7px 12px;border-radius:20px;background:var(--fill);color:var(--text);white-space:nowrap;}
+  .fchip.on{background:var(--accent);color:#fff;}
+
+  /* Search */
+  .search{width:100%;padding:10px 12px;border-radius:10px;background:var(--fill);border:none;color:var(--text);font-size:15px;margin-bottom:12px;}
+  .search::placeholder{color:var(--text3);}
+
+  /* List rows */
+  .listrow{background:var(--card);border:.5px solid var(--sep);border-radius:12px;padding:14px;margin-bottom:10px;}
+
+  /* Matrix */
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .legend .it{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);}
+  .ind{width:20px;height:20px;border-radius:5px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .mtable{overflow-x:auto;border-radius:12px;border:.5px solid var(--sep);background:var(--card);}
+  table{border-collapse:collapse;font-size:11px;}
+  th,td{padding:6px 5px;text-align:center;white-space:nowrap;}
+  thead th{background:var(--fill);font-size:9px;font-weight:700;position:sticky;top:0;}
+  td.org,th.org{text-align:left;font-weight:600;position:sticky;left:0;background:var(--card);min-width:78px;}
+  thead th.org{background:var(--fill);}
+  tbody tr{border-top:.5px solid var(--sep);}
+
+  /* Forms */
+  label.field{display:block;font-size:14px;font-weight:600;margin:14px 0 6px;}
+  select,textarea,input[type=text]{width:100%;padding:11px 12px;border-radius:10px;background:var(--fill);border:none;color:var(--text);font-size:15px;font-family:inherit;}
+  textarea{resize:vertical;min-height:60px;}
+  .btn{display:block;width:100%;background:var(--accent);color:#fff;font-weight:600;font-size:16px;padding:14px;border-radius:12px;text-align:center;margin-top:18px;}
+  .btn.sec{background:var(--fill);color:var(--accent);}
+
+  /* Quiz */
+  .opt{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--sep);border-radius:10px;padding:14px;margin-bottom:10px;font-size:14px;}
+  .opt.correct{background:color-mix(in srgb,#34a853 14%,transparent);border-color:#34a853;}
+  .opt.wrong{background:color-mix(in srgb,#ea4335 14%,transparent);border-color:#ea4335;}
+  .opt .mk{margin-left:auto;font-size:18px;}
+  .progress{height:6px;border-radius:3px;background:var(--fill);overflow:hidden;margin:8px 0 16px;}
+  .progress > i{display:block;height:100%;background:var(--accent);}
+
+  /* Home overlay */
+  .overlay{position:absolute;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;}
+  .hidden{display:none !important;}
+  .fadein{animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .empty{text-align:center;color:var(--text2);padding:40px 20px;}
+  .empty .ic{font-size:40px;color:var(--text3);}
+  .demonote{font-size:11px;color:var(--text3);text-align:center;padding:6px 16px 0;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="navbar">
+    <button class="navbtn back" id="backBtn" onclick="goBack()" style="visibility:hidden">‹ Back</button>
+    <div class="title" id="navTitle">Process</div>
+    <button class="navbtn right" id="themeBtn" onclick="toggleTheme()">◐</button>
+  </div>
+  <div class="scroll" id="screen"></div>
+  <div class="tabbar" id="tabbar"></div>
+
+  <!-- Home overlay -->
+  <div class="overlay" id="home"></div>
+</div>
+
+<script>
+/* ============================ DATA ============================ */
+const KEY_IDEA = "Capability development is an operational problem → portfolio → evidence loop — not a linear requirements-document-to-program pipeline.";
+const CAVEAT = "Educational tool only. Organizations, roles, and authorities evolve. Verify current guidance against official source material before acting.";
+
+const STEPS = [
+ {n:1,title:"Strategic direction / operational problem",short:"Senior leaders and combatant commands frame the problem worth solving.",detail:"Everything starts with a validated operational problem and strategic direction. Department of War and Army senior leaders, combatant commands (CCMDs), and the Joint Staff set priorities and articulate the operational problems the force must solve. In the emerging model this is less about a single document and more about a shared understanding of what matters most.",orgs:["DoW/DoD","Army Senior Leaders","CCMDs","Joint Staff","HQDA"],outputs:["Strategic guidance","Operational problem statement","Priorities","Joint Operational Problems","Army transformation priorities"],friction:["Problems stated as solutions ('we need X') rather than as problems","Unclear whether the problem is Army-only or Joint","Competing priorities with no clear ranking"],q:["What problem are we actually solving?","Who has validated that it matters?","Is this Army-only or Joint?"],next:[2,3]},
+ {n:2,title:"Future-force framing",short:"Concepts describe how the future Army needs to fight.",detail:"The problem is placed in the context of the future operating environment. T2COM, the Futures and Concepts Center (FCC), and the Directorate of Concepts translate strategic direction into concepts that describe how the future Army needs to fight, surfacing the assumptions that everything downstream will depend on.",orgs:["T2COM","FCC","Directorate of Concepts"],outputs:["Future operational environment assessment","Army concepts","Future Warfighting Concepts"],friction:["Assumptions left implicit and never tested","Concepts disconnected from what is technically or fiscally feasible"],q:["How does the future Army need to fight?","What assumptions are we making?","Which assumptions, if wrong, break the concept?"],next:[3]},
+ {n:3,title:"Functional problem ownership",short:"An FCD takes ownership of the functional problem and gaps.",detail:"A Force Capability Division (FCD) takes primary ownership of the functional problem and frames it as capability gaps and learning demands. Other FCDs are identified as supporting or affected. Clear ownership here prevents the most common failure mode downstream: no one accountable for the problem as a whole.",orgs:["FCDs","C2 FCD","Cyber FCD","Fires FCD","Intelligence FCD","Maneuver FCD","Aviation FCD","Sustainment FCD","Medical FCD","Protection FCD"],outputs:["Functional modernization problems","Capability gaps","Learning demands","Concept-required capabilities"],friction:["Two FCDs each assume the other owns it","Cross-functional problems with no integrating owner"],q:["Which FCD owns the primary problem?","Which FCDs are supporting or affected?","Who integrates across the FCDs?"],next:[4,5]},
+ {n:4,title:"DOTMLPF-P and proponent integration",short:"Determine what must change beyond equipment.",detail:"The Combined Arms Center (CAC), CAC TID, Centers of Excellence, and proponents examine the problem across all DOTMLPF-P domains. A surprising number of 'materiel gaps' are actually doctrine, organization, or training gaps. This step keeps the enterprise from buying equipment to solve a problem that a change in how we operate would solve faster and cheaper.",orgs:["CAC","CAC TID","Centers of Excellence","Proponents"],outputs:["Doctrine implications","Organization implications","Training implications","Materiel implications","Leadership/education implications","Personnel implications","Facilities implications","Policy implications"],friction:["Defaulting to a materiel solution before checking non-materiel options","Materiel fielded with no doctrine or training to employ it"],q:["Is this actually a materiel gap, or a DOTMLPF-P gap?","What must change besides equipment?","Who owns each non-materiel change?"],next:[5,8]},
+ {n:5,title:"S&T / technical feasibility",short:"Assess whether a solution is technically possible and mature.",detail:"DEVCOM, ARL, MRDC, the C5ISR Center, industry, and innovation partners assess technical feasibility and technology maturity, and may build prototypes. This grounds the concept in what is actually buildable now versus what needs investment, and reveals what industry can already provide.",orgs:["DEVCOM","ARL","MRDC","C5ISR Center","Industry","Innovation partners"],outputs:["Technical feasibility assessment","Prototypes","S&T roadmap","Technology maturity insights"],friction:["Requirements written for technology that is not yet mature","Ignoring commercial solutions already on the market"],q:["Is the solution technically possible?","Is the technology mature?","What can industry already provide?"],next:[6]},
+ {n:6,title:"Experimentation and Soldier feedback",short:"Put concepts and prototypes in front of Soldiers.",detail:"The Joint Modernization Command (JMC), Project Convergence, FCC experimentation, operational units, and the CTCs put concepts and prototypes in front of Soldiers and commanders. The purpose is learning, not validation theater: did the idea survive contact with reality?",orgs:["JMC","Project Convergence","FCC Experimentation","Operational units","CTCs"],outputs:["Learning results","User feedback","Prototype assessment","Military utility insights"],friction:["Experiments designed to confirm rather than to learn","Soldier feedback collected but never analyzed or acted on"],q:["What did Soldiers and commanders actually say?","Did the concept survive contact with reality?","What did we learn that we did not expect?"],next:[7]},
+ {n:7,title:"Analysis and evidence",short:"Turn observations into rigorous evidence.",detail:"TDAC, CAA, ORSAs, ATEC, and analysts turn experimentation observations and data into rigorous evidence through operational analysis, modeling and simulation, and risk assessment. This is where assumptions are confirmed or disproven before the enterprise commits resources.",orgs:["TDAC","CAA","ORSAs","ATEC","Analysts"],outputs:["Operational analysis","Modeling and simulation","Formation effectiveness analysis","Performance data","Risk assessment"],friction:["Decisions made ahead of the analysis","Cherry-picking evidence that supports a preferred answer"],q:["What does the evidence actually show?","What assumptions were disproven?","How confident are we, and where is the risk?"],next:[8]},
+ {n:8,title:"Requirements integration",short:"Translate evidence into justified, minimal requirements.",detail:"The FCC Futures Integration Directorate (FID), FCD requirements writers, HQDA G-8 Force Development, and CAC/proponents translate evidence into formal requirements. The discipline here is writing the minimum viable requirement that the evidence justifies — not a wish list.",orgs:["FCC FID","FCD requirements writers","HQDA G-8 FD","CAC/Proponents"],outputs:["Validated gaps","CBAs / TBAs","CDDs","A-CDDs","ICDs","CONOPS","Requirements documentation"],friction:["Gold-plating requirements beyond what evidence supports","Requirements that no acquisition pathway can realistically deliver"],q:["What requirement is justified by evidence?","What is the minimum viable requirement?","Is this requirement testable and affordable?"],next:[9]},
+ {n:9,title:"Resourcing and prioritization",short:"Decide what the Army can afford and what it displaces.",detail:"HQDA G-8, the PAE, the PEGs, the PPBC, the SRG, and ASA(FM&C) decide what fits in the Army Program and the FYDP. Every funded capability displaces something else; this step makes those trade-offs explicit.",orgs:["HQDA G-8","PAE","PEGs","PPBC","SRG","ASA(FM&C)"],outputs:["Army Program","FYDP alignment","Affordability analysis","Prioritization decisions"],friction:["Requirements approved with no resourcing path","Underestimating sustainment and lifecycle cost"],q:["Can the Army afford this?","What is displaced if this is funded?","Is the full lifecycle cost accounted for?"],next:[10]},
+ {n:10,title:"Acquisition portfolio execution",short:"Select a pathway and execute with portfolio accountability.",detail:"ASA(ALT), PAEs, CPEs, PEOs, PMs, and contracting officials execute the acquisition. In the emerging model, portfolio accountability (PAEs/CPEs) sits alongside program execution (PEOs/PMs), and pathway selection is matched to the type of capability and how fast it must move.",orgs:["ASA(ALT)","PAEs","CPEs","PEOs","PMs","Contracting officials"],outputs:["Acquisition strategy","Pathway selection","Contracts","Prototypes","Production plans"],friction:["Choosing a slow pathway for an urgent need (or vice versa)","Program execution without portfolio-level trade-off visibility"],q:["What acquisition pathway fits?","Who has portfolio accountability?","How does this fit the broader portfolio?"],next:[11]},
+ {n:11,title:"Test and continuous evaluation",short:"Continuously test for effectiveness, suitability, and safety.",detail:"ATEC, PAE test integrators, and operational units test for operational effectiveness, suitability, and safety. In the emerging model, test is continuous and integrated with development rather than a single gate at the end, with Soldier-validated feedback throughout.",orgs:["ATEC","PAE test integrators","Operational units"],outputs:["Test data","Soldier-validated feedback","Safety releases","Operational effectiveness and suitability findings"],friction:["Test treated as a final gate instead of continuous","Discovering integration problems too late to fix cheaply"],q:["What must be tested before scaling?","What risks remain?","Is it effective, suitable, and safe for Soldiers?"],next:[12]},
+ {n:12,title:"Fielding, sustainment, and formation integration",short:"Make sure units can absorb, train, maintain, and employ it.",detail:"AMC, ASC, gaining units, CAC, TRADOC/T2COM, and the sustainment enterprise field the capability and integrate it into formations — with the training, doctrine, and sustainment needed to actually use it. A capability that units cannot absorb is not really fielded.",orgs:["AMC","ASC","Gaining units","CAC","TRADOC/T2COM","Sustainment enterprise"],outputs:["Fielding plans","Training","Doctrine updates","Sustainment plans","Formation integration"],friction:["Equipment fielded faster than units can absorb it","No sustainment plan, so capability degrades after fielding"],q:["Can units actually absorb, train, maintain, and employ this?","Is the sustainment tail funded?","What doctrine and training must change?"],next:[13]},
+ {n:13,title:"Feedback loop",short:"Learn from the field and feed the next cycle.",detail:"Operational units, CTCs, exercises, and lessons-learned processes feed insights back to FCC, CAC, G-8, and ASA(ALT). This closes the loop: the field teaches the enterprise, concepts and requirements are refined, and the next iteration begins. The process is a loop, not a finish line.",orgs:["Operational units","CTCs","Exercises","Lessons learned","FCC","CAC","G-8","ASA(ALT)"],outputs:["Lessons learned","Updated concepts","Refined requirements","Modernization adjustments"],friction:["Lessons collected but never fed back into concepts or requirements","Treating fielding as the end of the story"],q:["What did the field teach us?","What must change in the next cycle?","Which assumptions from Step 2 turned out to be wrong?"],next:[1,2,3]}
+];
+
+const CATS = ["Concepts & Futures","Functional Problem Owners","Combined Arms & Proponents","Science & Technology","Experimentation","Analysis & Evidence","Requirements","Resourcing","Acquisition","Test & Evaluation","Sustainment & Fielding","Operational Force"];
+
+const ORGS = [
+ {id:"fcc",name:"Futures and Concepts Center",abbr:"FCC",cat:"Concepts & Futures",role:"The Army's lead for understanding the future operating environment and framing the operational problems modernization must solve.",owns:["Future force design and concepts","Functional problem framing through its FCDs","Experimentation and requirements integration roles"],not:["Acquisition execution","Resourcing decisions","Operational test","Doctrine and training (CAC)"],rel:["CAC","DEVCOM","HQDA G-8","ASA(ALT)","JMC","TDAC"],out:["Concepts","Capability gaps","Requirements documentation","Experimentation campaigns"],when:"Early — whenever a future operational problem or capability gap is being framed.",steps:[2,3,6,8,13]},
+ {id:"doc",name:"FCC Directorate of Concepts",abbr:"DoC",cat:"Concepts & Futures",role:"Writes the concepts that describe how the future Army needs to fight.",owns:["Army warfighting concepts","Future operating environment framing"],not:["Requirements documents","Resourcing","Acquisition"],rel:["FCC","FCDs","CAC","T2COM"],out:["Future Warfighting Concepts","Operating environment assessments"],when:"At the very front, to frame the future-force context and surface assumptions.",steps:[2]},
+ {id:"fid",name:"FCC Futures Integration Directorate",abbr:"FID",cat:"Requirements",role:"Integrates evidence and FCD inputs into coherent, justified requirements.",owns:["Requirements integration across FCDs","Coherence of requirements documentation"],not:["Resourcing decisions","Acquisition execution"],rel:["FCDs","HQDA G-8 FD","CAC","TDAC"],out:["Integrated requirements documents","CDDs / A-CDDs / ICDs coordination"],when:"When evidence is mature enough to translate into formal requirements.",steps:[8]},
+ {id:"fccexp",name:"FCC Experimentation & G-3/5/7",abbr:"FCC G-3/5/7",cat:"Experimentation",role:"Plans and runs the FCC's experimentation campaigns and learning demands.",owns:["Experimentation campaign planning","Learning demand management"],not:["Operational test","Analysis (TDAC/CAA)"],rel:["JMC","FCDs","TDAC","Operational units"],out:["Experimentation plans","Learning results"],when:"When a concept or prototype needs to be learned about with Soldiers.",steps:[6]},
+ {id:"c2fcd",name:"Command & Control Force Capability Division",abbr:"C2 FCD",cat:"Functional Problem Owners",role:"Owns the command-and-control functional problem and its capability gaps.",owns:["C2 functional problem framing","C2 capability gaps and learning demands"],not:["Acquisition","Resourcing","C2 doctrine ownership (CAC/proponent)"],rel:["FCC","CAC TID","DEVCOM C5ISR","JMC","TDAC","FCC FID"],out:["C2 functional modernization problems","C2 capability gaps","Concept-required capabilities"],when:"Whenever the operational problem is primarily about command and control.",steps:[3,8]},
+ {id:"fcds",name:"Other Force Capability Divisions",abbr:"FCDs",cat:"Functional Problem Owners",role:"Each FCD owns a functional problem area (Fires, Intelligence, Maneuver, Aviation, Sustainment, Medical, Protection, Cyber, etc.).",owns:["Functional problem framing in their area","Capability gaps and learning demands"],not:["Acquisition","Resourcing","Doctrine ownership"],rel:["FCC","CAC","DEVCOM","TDAC","FCC FID"],out:["Functional modernization problems","Capability gaps"],when:"When the problem spans or belongs to another warfighting function.",steps:[3,8]},
+ {id:"cac",name:"Combined Arms Center",abbr:"CAC",cat:"Combined Arms & Proponents",role:"The Army's lead for leader development, doctrine, training, and combined-arms integration.",owns:["Doctrine","Training development","Leader development","DOTMLPF-P integration"],not:["Future concepts (FCC)","Acquisition","Resourcing"],rel:["FCC","Centers of Excellence","TRADOC/T2COM","Gaining units"],out:["Doctrine","Training products","DOTMLPF-P assessments"],when:"Whenever non-materiel (doctrine, organization, training, leadership) change may be involved.",steps:[4,12,13]},
+ {id:"cactid",name:"CAC Training and Integration Directorate",abbr:"CAC TID",cat:"Combined Arms & Proponents",role:"Integrates DOTMLPF-P implications across proponents and Centers of Excellence.",owns:["DOTMLPF-P integration analysis","Proponent coordination"],not:["Materiel acquisition","Requirements validation authority"],rel:["CAC","Centers of Excellence","FCDs","Proponents"],out:["DOTMLPF-P implications","Integration assessments"],when:"Early, to test whether the gap is materiel or non-materiel.",steps:[4]},
+ {id:"coe",name:"Centers of Excellence / Proponents",abbr:"CoE",cat:"Combined Arms & Proponents",role:"Branch and functional experts who own doctrine, training, and proponency for their area.",owns:["Branch doctrine and training","Proponent requirements input"],not:["Acquisition","Resourcing","Future concept authorship"],rel:["CAC","CAC TID","FCDs"],out:["Proponent input","Branch doctrine and training"],when:"When branch- or function-specific expertise is needed for DOTMLPF-P.",steps:[4,8]},
+ {id:"devcom",name:"Combat Capabilities Development Command",abbr:"DEVCOM",cat:"Science & Technology",role:"The Army's primary science and technology organization; assesses feasibility and builds prototypes.",owns:["Science and technology","Technical feasibility","Prototyping"],not:["Requirements validation","Acquisition execution","Resourcing"],rel:["ARL","C5ISR Center","FCDs","ASA(ALT)","Industry"],out:["Technical feasibility assessments","Prototypes","S&T roadmaps"],when:"When you need to know whether a solution is technically possible or mature.",steps:[5]},
+ {id:"arl",name:"Army Research Laboratory",abbr:"ARL",cat:"Science & Technology",role:"The Army's foundational research laboratory (a DEVCOM element) focused on long-horizon science.",owns:["Foundational research","Scientific discovery"],not:["Requirements","Acquisition","Fielding"],rel:["DEVCOM","Academia","Industry"],out:["Research findings","Technology maturity insights"],when:"When the problem depends on emerging or not-yet-mature science.",steps:[5]},
+ {id:"mrdc",name:"Medical Research and Development Command",abbr:"MRDC",cat:"Science & Technology",role:"Leads Army medical science and technology and medical materiel development.",owns:["Medical S&T","Medical materiel development"],not:["Non-medical acquisition","Requirements validation"],rel:["DEVCOM","Medical FCD","ASA(ALT)"],out:["Medical feasibility assessments","Medical prototypes"],when:"When the capability has a medical or health dimension.",steps:[5]},
+ {id:"tdac",name:"TRADOC Data and Analysis Center",abbr:"TDAC",cat:"Analysis & Evidence",role:"Provides operational analysis, modeling and simulation, and evidence to inform decisions.",owns:["Operational analysis","Modeling and simulation","Formation effectiveness analysis"],not:["Requirements authorship","Acquisition","Test execution"],rel:["FCC","FCDs","CAA","ATEC"],out:["Analysis reports","Modeling and simulation results","Risk assessments"],when:"When experimentation and data need to be turned into rigorous evidence.",steps:[7]},
+ {id:"jmc",name:"Joint Modernization Command",abbr:"JMC",cat:"Experimentation",role:"Plans and executes large-scale experimentation, including campaigns like Project Convergence.",owns:["Experimentation execution","Joint and Army experimentation campaigns"],not:["Operational test (ATEC)","Requirements","Acquisition"],rel:["FCC","FCDs","Operational units","ASA(ALT)"],out:["Experimentation results","Military utility insights"],when:"When concepts and prototypes need to be experimented with at scale.",steps:[6]},
+ {id:"usaric",name:"75th U.S. Army Innovation Command",abbr:"75th USARIC",cat:"Experimentation",role:"Reserve-component command that connects innovation, experimentation, and operational learning.",owns:["Innovation and experimentation support","Operational learning integration"],not:["Requirements validation","Acquisition"],rel:["JMC","FCC","Operational units"],out:["Innovation insights","Experimentation support"],when:"When reserve-component or distributed innovation and experimentation help.",steps:[6]},
+ {id:"g8fd",name:"HQDA G-8 Force Development",abbr:"HQDA G-8 FD",cat:"Requirements",role:"Helps validate and integrate requirements and connects them to the Army Program.",owns:["Requirements validation support","Force development integration"],not:["Concept authorship","Acquisition execution"],rel:["FCC FID","HQDA G-8 PAE","ASA(ALT)"],out:["Validated requirements","Force development integration products"],when:"Before formal requirements are finalized and as they enter resourcing.",steps:[8,9]},
+ {id:"g8pae",name:"HQDA G-8 Program Analysis and Evaluation",abbr:"HQDA G-8 PAE",cat:"Resourcing",role:"Analyzes affordability and helps build and balance the Army Program.",owns:["Program analysis and evaluation","Affordability analysis"],not:["Requirements authorship","Acquisition execution"],rel:["HQDA G-8 FD","PEGs","ASA(FM&C)"],out:["Affordability analysis","Program build inputs"],when:"When affordability and program trade-offs must be assessed.",steps:[9]},
+ {id:"asaalt",name:"ASA(ALT)",abbr:"ASA(ALT)",cat:"Acquisition",role:"The Army's acquisition executive; owns acquisition policy and oversight of programs.",owns:["Acquisition policy","Program oversight","Acquisition strategy approval"],not:["Requirements (FCC/G-8)","Operational test (ATEC)"],rel:["PAEs","CPEs","PEOs","PMs","HQDA G-8"],out:["Acquisition policy","Acquisition decisions"],when:"When the problem moves toward acquisition strategy and execution.",steps:[10,13]},
+ {id:"pae",name:"Portfolio Acquisition Executive",abbr:"PAE",cat:"Acquisition",role:"Holds accountability for a portfolio of capabilities and balances trade-offs across it.",owns:["Portfolio-level accountability","Cross-program trade-offs","Test integration within the portfolio"],not:["Requirements generation","Resourcing decisions"],rel:["ASA(ALT)","CPEs","PEOs","PMs","ATEC"],out:["Portfolio strategy","Trade-off decisions"],when:"When capabilities must be balanced across a portfolio rather than program by program.",steps:[10,11]},
+ {id:"cpe",name:"Capability Program Executive",abbr:"CPE",cat:"Acquisition",role:"Leads execution of a specific capability program area within a portfolio.",owns:["Capability program execution","Program-area integration"],not:["Requirements authorship","Resourcing authority"],rel:["PAE","PEOs","PMs"],out:["Program execution plans","Capability delivery"],when:"When a specific capability program needs execution leadership.",steps:[10]},
+ {id:"peo",name:"Program Executive Office",abbr:"PEO",cat:"Acquisition",role:"Executes a group of acquisition programs and supervises the PMs under it.",owns:["Program execution","PM supervision","Acquisition delivery"],not:["Requirements generation","Resourcing decisions","Operational test"],rel:["ASA(ALT)","PAE","CPE","PMs","ATEC"],out:["Acquisition programs","Contracts","Delivered systems"],when:"When programs are being executed and delivered.",steps:[10,11]},
+ {id:"pm",name:"Product or Project Manager",abbr:"PM",cat:"Acquisition",role:"Manages the cost, schedule, and performance of a specific program or product.",owns:["Program cost, schedule, performance","Contract execution"],not:["Requirements generation","Operational test","Resourcing"],rel:["PEO","Contracting officials","ATEC","Gaining units"],out:["Contracts","Prototypes","Production and fielding plans"],when:"When a specific product or system is being developed, contracted, or fielded.",steps:[10,11,12]},
+ {id:"atec",name:"Army Test and Evaluation Command",abbr:"ATEC",cat:"Test & Evaluation",role:"Independently tests and evaluates capabilities for effectiveness, suitability, and safety.",owns:["Operational test","Independent evaluation","Safety releases"],not:["Requirements","Acquisition","Resourcing"],rel:["PEOs","PMs","PAE test integrators","Operational units","TDAC"],out:["Test data","Evaluation reports","Safety releases"],when:"When a capability must be tested and independently evaluated before scaling.",steps:[7,11]},
+ {id:"units",name:"Operational Units",abbr:"Units",cat:"Operational Force",role:"The Soldiers and formations who experiment with, test, receive, employ, and give feedback on capabilities.",owns:["Operational employment","Soldier feedback","Real-world learning"],not:["Requirements authorship","Acquisition","Resourcing"],rel:["JMC","CTCs","ATEC","AMC","FCC"],out:["Soldier feedback","Lessons learned","Operational insights"],when:"Throughout — especially experimentation, test, fielding, and feedback.",steps:[6,11,12,13]},
+ {id:"amc",name:"Army Materiel Command / Sustainment Enterprise",abbr:"AMC",cat:"Sustainment & Fielding",role:"Leads materiel readiness, fielding logistics, and lifecycle sustainment.",owns:["Materiel readiness","Fielding logistics","Lifecycle sustainment"],not:["Requirements","Acquisition program decisions","Operational test"],rel:["ASC","PEOs/PMs","Gaining units","CAC"],out:["Fielding plans","Sustainment plans","Readiness support"],when:"When fielding, sustainment, and lifecycle support must be planned.",steps:[12]}
+];
+
+const FUNCS = ["Concepts","DOTMLPF-P","Experimentation","S&T","Analysis","Requirements","Resourcing","Acquisition","Testing","Fielding","Feedback"];
+const FSHORT = {"Concepts":"Conc","DOTMLPF-P":"DOTM","Experimentation":"Exp","S&T":"S&T","Analysis":"Anly","Requirements":"Reqs","Resourcing":"Resc","Acquisition":"Acq","Testing":"Test","Fielding":"Fld","Feedback":"Fdbk"};
+const LEVELS={Lead:"L",Support:"S",Inform:"I",Receive:"R"};
+const LVCOLOR={Lead:"var(--lead)",Support:"var(--support)",Inform:"var(--inform)",Receive:"var(--receive)"};
+// matrix: orgId -> {func:level}
+const MATRIX = {
+ fcc:{Concepts:"Lead",Experimentation:"Lead",Requirements:"Lead",Analysis:"Support",Feedback:"Lead","DOTMLPF-P":"Support"},
+ doc:{Concepts:"Lead",Requirements:"Inform"},
+ fid:{Requirements:"Lead",Concepts:"Support",Analysis:"Receive"},
+ fccexp:{Experimentation:"Lead",Concepts:"Support",Analysis:"Inform"},
+ c2fcd:{Concepts:"Support",Requirements:"Lead",Experimentation:"Support","DOTMLPF-P":"Support",Feedback:"Support"},
+ fcds:{Concepts:"Support",Requirements:"Lead",Experimentation:"Support","DOTMLPF-P":"Support"},
+ cac:{"DOTMLPF-P":"Lead",Fielding:"Support",Feedback:"Support",Concepts:"Inform"},
+ cactid:{"DOTMLPF-P":"Lead",Requirements:"Support"},
+ coe:{"DOTMLPF-P":"Support",Requirements:"Inform"},
+ devcom:{"S&T":"Lead",Experimentation:"Support",Requirements:"Inform"},
+ arl:{"S&T":"Support"},
+ mrdc:{"S&T":"Support"},
+ tdac:{Analysis:"Lead",Experimentation:"Support",Requirements:"Inform"},
+ jmc:{Experimentation:"Lead",Analysis:"Support",Feedback:"Support"},
+ usaric:{Experimentation:"Support",Feedback:"Inform"},
+ g8fd:{Requirements:"Support",Resourcing:"Support"},
+ g8pae:{Resourcing:"Lead"},
+ asaalt:{Acquisition:"Lead",Testing:"Inform",Feedback:"Receive"},
+ pae:{Acquisition:"Lead",Testing:"Support",Resourcing:"Inform"},
+ cpe:{Acquisition:"Support"},
+ peo:{Acquisition:"Support",Testing:"Support",Fielding:"Support"},
+ pm:{Acquisition:"Support",Testing:"Support",Fielding:"Lead"},
+ atec:{Testing:"Lead",Analysis:"Support"},
+ units:{Experimentation:"Support",Testing:"Support",Fielding:"Receive",Feedback:"Lead"},
+ amc:{Fielding:"Lead",Feedback:"Inform"}
+};
+
+const GLOSS = [
+ {t:"DOTMLPF-P",d:"A checklist of the dimensions a capability solution can involve: Doctrine, Organization, Training, Materiel, Leadership & education, Personnel, Facilities, and Policy.",w:"It forces you to ask whether a problem really needs new equipment, or whether changing how we train, organize, or operate would solve it faster and cheaper.",e:"The DOTMLPF-P review showed the gap was mostly a training and doctrine problem, not a materiel one."},
+ {t:"CBA",d:"Capabilities-Based Assessment — a structured study that identifies capability gaps, their causes, and possible solution approaches.",w:"It is the analytical front end that justifies why a requirement is needed before anyone writes one.",e:"The CBA confirmed a real gap in long-range sensing before the team drafted a requirement."},
+ {t:"TBA",d:"TRADOC-Based Assessment (or task-based assessment) — a TRADOC-led analysis of capability needs and gaps.",w:"It provides Army/TRADOC analytical grounding for capability decisions.",e:"Findings from the TBA shaped how the FCD framed the functional problem."},
+ {t:"ICD",d:"Initial Capabilities Document — describes a capability gap and the need for a materiel or non-materiel solution.",w:"It is often the first formal requirements artifact that opens the door to materiel development.",e:"The ICD documented the gap and recommended pursuing a materiel solution."},
+ {t:"CDD",d:"Capability Development Document — specifies the performance attributes a system must meet.",w:"It is the detailed requirement a program is held accountable to deliver.",e:"The CDD set the key performance parameters the PM had to satisfy."},
+ {t:"A-CDD",d:"Abbreviated Capability Development Document — a streamlined CDD used for faster or smaller efforts.",w:"It supports speed by reducing requirements overhead when the situation allows.",e:"Because the effort was urgent, the team used an A-CDD instead of a full CDD."},
+ {t:"CONOPS",d:"Concept of Operations — a plain-language description of how a capability will be employed operationally.",w:"It connects the requirement to how Soldiers will actually use the capability.",e:"The CONOPS clarified how the new sensor would feed the fires kill chain."},
+ {t:"FCW",d:"Future Warfighting Concept — describes how the future Army intends to fight.",w:"It anchors modernization to a shared vision of future warfare.",e:"Each capability gap was traced back to the FCW."},
+ {t:"FDW",d:"Future Deep Warfare / future-focused warfighting concept area — a forward-looking concept element (terminology varies by guidance).",w:"It helps frame specialized future-fight problems within the broader concept.",e:"The FDW work informed how the FCD scoped the deep-fight problem."},
+ {t:"FDU",d:"Force Design Update — a proposed change to how a formation is organized.",w:"It is the mechanism for non-materiel organizational change.",e:"The team pursued an FDU to reorganize the unit rather than buy new equipment."},
+ {t:"JCIDS",d:"Joint Capabilities Integration and Development System — the Joint process for identifying and validating capability requirements.",w:"It governs how Joint requirements are validated and is relevant when a need is Joint.",e:"Because the need was Joint, the requirement went through JCIDS."},
+ {t:"JFRP",d:"Joint Force Requirements Process (an evolving streamlined approach to Joint requirements; terminology depends on current guidance).",w:"It reflects efforts to make Joint requirements faster and more relevant.",e:"The team tracked JFRP changes to understand the Joint validation path."},
+ {t:"JROC",d:"Joint Requirements Oversight Council — the senior Joint body that validates major requirements.",w:"It is the Joint decision authority for significant capability requirements.",e:"The major requirement required JROC validation."},
+ {t:"PPBE",d:"Planning, Programming, Budgeting, and Execution — the DoD process for building and managing budgets.",w:"It determines whether and when a capability actually gets funded.",e:"Even a validated requirement waits on the PPBE cycle for funding."},
+ {t:"PEG",d:"Program Evaluation Group — Army bodies that build and balance portions of the Army Program by function.",w:"PEGs are where resourcing trade-offs get made.",e:"The capability had to compete for funding within its PEG."},
+ {t:"POM",d:"Program Objective Memorandum — the Army's multi-year program and funding proposal.",w:"If a capability is not in the POM, it is generally not funded.",e:"The team worked to get the capability into the next POM."},
+ {t:"FYDP",d:"Future Years Defense Program — the multi-year projection of DoD programs and funding.",w:"It shows whether a capability is affordable across the planning horizon.",e:"The affordability analysis checked how the program fit within the FYDP."},
+ {t:"ASARC",d:"Army Systems Acquisition Review Council — a senior Army acquisition decision forum.",w:"It is a key oversight body for major Army acquisition decisions.",e:"The program prepared for its ASARC milestone review."},
+ {t:"MTA",d:"Middle Tier of Acquisition — a pathway for rapid prototyping or rapid fielding.",w:"It lets the Army move faster than the traditional acquisition pathway when appropriate.",e:"The team used the MTA rapid-prototyping pathway to move quickly."},
+ {t:"Software Acquisition Pathway",d:"An acquisition pathway designed for the continuous, iterative delivery of software.",w:"Software needs frequent updates; this pathway fits that reality better than hardware-style milestones.",e:"Because the capability was software-centric, the PM used the Software Acquisition Pathway."},
+ {t:"PAE",d:"Portfolio Acquisition Executive — accountable for a portfolio of capabilities and trade-offs across it.",w:"It introduces portfolio-level accountability alongside individual program execution.",e:"The PAE balanced investment across the portfolio rather than program by program."},
+ {t:"CPE",d:"Capability Program Executive — leads execution of a specific capability program area within a portfolio.",w:"It provides focused execution leadership under the portfolio.",e:"The CPE drove execution of the capability program."},
+ {t:"PEO",d:"Program Executive Office — executes a group of acquisition programs and supervises PMs.",w:"It is where acquisition delivery is managed day to day.",e:"The PEO oversaw several PMs delivering related systems."},
+ {t:"PM",d:"Product or Project Manager — owns cost, schedule, and performance of a program or product.",w:"The PM is who actually delivers the system.",e:"The PM was accountable for delivering on cost and schedule."},
+ {t:"ATEC",d:"Army Test and Evaluation Command — independently tests and evaluates capabilities.",w:"Independent test protects Soldiers and decision-makers from unvalidated claims.",e:"ATEC's independent evaluation informed the fielding decision."},
+ {t:"TDAC",d:"TRADOC Data and Analysis Center — provides operational analysis and modeling and simulation.",w:"It turns observations and data into rigorous, defensible evidence.",e:"TDAC's analysis showed the formation effect the capability would produce."},
+ {t:"FCD",d:"Force Capability Division — an FCC division that owns a functional problem area.",w:"FCDs are where functional capability problems get owned and framed.",e:"The C2 FCD owned the command-and-control problem."},
+ {t:"T2COM",d:"TRADOC's transformation/Army Futures-aligned command element responsible for concepts and transformation (terminology depends on current organization).",w:"It connects concepts, doctrine, training, and transformation.",e:"T2COM helped frame the future-force context."},
+ {t:"FCC",d:"Futures and Concepts Center — leads future-force design, concepts, and capability problem framing.",w:"It is the front of the capability-development ecosystem.",e:"The FCC framed the operational problem before requirements work began."},
+ {t:"CAC TID",d:"CAC Training and Integration Directorate — integrates DOTMLPF-P implications across proponents.",w:"It keeps non-materiel solutions and integration from being overlooked.",e:"CAC TID flagged the training and doctrine implications early."},
+ {t:"DEVCOM",d:"Combat Capabilities Development Command — the Army's primary science and technology organization.",w:"It tells you whether a solution is technically feasible and mature.",e:"DEVCOM assessed feasibility and built an early prototype."},
+ {t:"ARL",d:"Army Research Laboratory — the Army's foundational research lab and a DEVCOM element.",w:"It addresses the long-horizon science behind future capabilities.",e:"ARL's research underpinned the emerging technology."},
+ {t:"JMC",d:"Joint Modernization Command — plans and executes large-scale experimentation like Project Convergence.",w:"It is where concepts and prototypes meet Soldiers at scale.",e:"JMC ran the experiment that tested the new concept."}
+];
+
+const QUIZ = [
+ {c:"Who first?",p:"A new operational problem about command and control has just been identified. Who should generally own and frame the functional problem first?",o:["A PEO","The C2 FCD","ATEC","A contracting officer"],a:1,x:"Functional problem ownership typically sits with the relevant Force Capability Division — here, the C2 FCD — before acquisition or test organizations engage."},
+ {c:"Materiel vs DOTMLPF-P",p:"A unit says it 'needs a new app' but the real issue is that no doctrine or training exists for a task. What does this most likely indicate?",o:["A pure materiel gap","A DOTMLPF-P (non-materiel) gap","A resourcing decision","A test failure"],a:1,x:"Many 'materiel' requests are actually DOTMLPF-P gaps. CAC / CAC TID help determine whether doctrine, training, or organization changes solve the problem."},
+ {c:"Analysis",p:"Which organization most typically provides operational analysis and modeling and simulation to turn experimentation into evidence?",o:["TDAC","PEO","AMC","CPE"],a:0,x:"TDAC (with CAA and ORSAs) provides the operational analysis and modeling and simulation that generate evidence."},
+ {c:"Acquisition",p:"Which organization owns acquisition execution and program delivery?",o:["FCC","TDAC","PEO / PM under ASA(ALT)","CAC"],a:2,x:"Acquisition execution belongs to ASA(ALT) and its PEOs/PMs (with PAEs/CPEs for portfolio accountability) — not the FCC or CAC."},
+ {c:"Resourcing",p:"Where does HQDA G-8 most clearly enter the process?",o:["Writing concepts","Resourcing and prioritization (and helping validate requirements)","Running experiments","Operational test"],a:1,x:"HQDA G-8 is central to resourcing and prioritization, and G-8 Force Development helps validate and integrate requirements."},
+ {c:"Roles",p:"What is the key difference between FCC/FCDs and PEOs/PMs?",o:["They are the same organization","FCC/FCDs frame problems and requirements; PEOs/PMs execute acquisition and deliver","FCC/FCDs run operational test","PEOs/PMs write the concepts"],a:1,x:"FCC/FCDs frame operational problems and requirements; PEOs/PMs (under ASA(ALT)) execute acquisition and deliver systems. The new model does not merge these roles."},
+ {c:"Experimentation",p:"Soldiers need to try a prototype at scale to see if a concept works. Which organization most typically plans and runs that experimentation?",o:["JMC","ARL","ASA(FM&C)","ASARC"],a:0,x:"JMC plans and executes large-scale experimentation (including Project Convergence), putting concepts and prototypes in front of Soldiers."},
+ {c:"S&T",p:"You need to know whether a proposed solution is even technically possible. Who do you engage?",o:["DEVCOM","G-8 PAE","ATEC","AMC"],a:0,x:"DEVCOM (with ARL, MRDC, and the C5ISR Center) assesses technical feasibility and technology maturity."},
+ {c:"Test",p:"Who independently tests and evaluates a capability for effectiveness, suitability, and safety before scaling?",o:["FCC FID","ATEC","DoC","PEG"],a:1,x:"ATEC independently tests and evaluates capabilities and issues safety releases."},
+ {c:"Process shape",p:"How is Army capability development best understood in the emerging model?",o:["A strictly linear requirements-to-program pipeline","An iterative operational problem → portfolio → evidence loop","A single document handed from one office to the next","Entirely owned by ASA(ALT)"],a:1,x:"It is best understood as an iterative, distributed loop — operational problem to portfolio to evidence — with feedback, not a linear pipeline."},
+ {c:"Requirements",p:"When translating evidence into a formal requirement, what is the disciplined goal?",o:["Capture every desirable feature","Write the minimum viable requirement the evidence justifies","Skip requirements entirely","Let the PM define the requirement"],a:1,x:"The discipline is to write the minimum viable requirement justified by evidence — avoiding gold-plating that no pathway can deliver."},
+ {c:"Fielding",p:"Before declaring a capability 'fielded,' what must be true of the gaining units?",o:["Nothing beyond delivery","They can absorb, train, maintain, and employ it","Only that the contract closed","Only that ATEC tested it"],a:1,x:"Fielding includes formation integration: units must be able to absorb, train, maintain, and employ the capability, with sustainment planned."}
+];
+
+const WFFUNCS=["Command & Control","Movement & Maneuver","Intelligence","Fires","Sustainment","Protection","Information / Cyber"];
+
+/* ===================== HELPERS ===================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+function orgByAbbr(label){
+  const l=label.toLowerCase();
+  let o=ORGS.find(o=>o.abbr.toLowerCase()===l||o.name.toLowerCase()===l);
+  if(o)return o;
+  return ORGS.find(o=>l.includes(o.abbr.toLowerCase())||o.name.toLowerCase().includes(l));
+}
+function bullets(arr){return arr.map(i=>`<div class="bullet"><span class="dot">•</span><span>${esc(i)}</span></div>`).join("");}
+
+/* ===================== NAV / STATE ===================== */
+let stack=[{tab:"process",view:"root"}];
+let theme=localStorage.getItem("cf_theme")||"";
+if(theme)document.documentElement.setAttribute("data-theme",theme);
+
+const TABS=[
+ {id:"process",label:"Process",ic:"◳"},
+ {id:"organizations",label:"Orgs",ic:"▦"},
+ {id:"matrix",label:"Matrix",ic:"▤"},
+ {id:"build",label:"Build",ic:"✦"},
+ {id:"glossary",label:"Glossary",ic:"📖"}
+];
+function renderTabs(){
+  const cur=stack[stack.length-1].tab;
+  $("#tabbar").innerHTML=TABS.map(t=>`<button class="tab ${t.id===cur?'active':''}" onclick="selectTab('${t.id}')"><span class="ic">${t.ic}</span><span>${t.label}</span></button>`).join("");
+}
+function selectTab(tab){stack=[{tab:tab,view:"root"}];render();}
+function push(view,param){const tab=stack[stack.length-1].tab;stack.push({tab,view,param});render();}
+function goBack(){if(stack.length>1){stack.pop();render();}}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  theme=cur==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",theme);
+  localStorage.setItem("cf_theme",theme);
+}
+function showHome(){$("#home").classList.remove("hidden");renderHome();}
+function hideHome(){$("#home").classList.add("hidden");}
+function goTab(tab){hideHome();selectTab(tab);}
+
+/* ===================== RENDER ROUTER ===================== */
+function render(){
+  renderTabs();
+  const top=stack[stack.length-1];
+  $("#backBtn").style.visibility=stack.length>1?"visible":"hidden";
+  const sc=$("#screen");sc.scrollTop=0;
+  sc.className="scroll";
+  let title="",html="";
+  if(top.view==="root"){
+    if(top.tab==="process"){title="Process";html=viewProcess();}
+    else if(top.tab==="organizations"){title="Organizations";html=viewOrgs();}
+    else if(top.tab==="matrix"){title="Matrix";html=viewMatrix();}
+    else if(top.tab==="build"){title="Build a Path";html=viewBuild();}
+    else if(top.tab==="glossary"){title="Glossary";html=viewGlossary();}
+  } else if(top.view==="step"){title="Step "+top.param;html=viewStep(top.param);}
+  else if(top.view==="org"){const o=ORGS.find(o=>o.id===top.param);title=o.abbr;html=viewOrg(o);}
+  else if(top.view==="term"){title="Glossary";html=viewTerm(top.param);}
+  else if(top.view==="result"){title="Recommended Path";html=lastResult||"";}
+  else if(top.view==="quiz"){title="Training Quiz";html=viewQuiz();}
+  else if(top.view==="notes"){title="Saved Notes";html=viewNotes();}
+  $("#navTitle").textContent=title;
+  sc.innerHTML=`<div class="fadein">${html}</div>`;
+  if(top.view==="root"&&top.tab==="organizations")wireOrgSearch();
+  if(top.view==="root"&&top.tab==="glossary")wireGlossSearch();
+}
+
+/* ===================== HOME ===================== */
+function renderHome(){
+  $("#home").innerHTML=`
+   <div class="scroll" style="padding:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div></div>
+      <button class="navbtn" onclick="hideHome()">Done</button>
+    </div>
+    <h1 class="h1">Capability Flow</h1>
+    <p class="sub" style="margin-top:0">Understand the Army capability-development ecosystem</p>
+    <div class="keyidea" style="margin:16px 0">
+      <h3><span class="ic">💡</span> Key Idea</h3>
+      <div class="muted" style="font-size:14px;color:var(--text)">${esc(KEY_IDEA)}</div>
+    </div>
+    <button class="bigcard" onclick="goTab('process')">
+      <div class="glyph" style="background:var(--support)">◳</div>
+      <div><div class="t">Explore the Process</div><div class="d">The 13-step operational problem → portfolio → evidence loop</div></div>
+      <div class="arrow">›</div></button>
+    <button class="bigcard" onclick="goTab('matrix')">
+      <div class="glyph" style="background:var(--accent)">▤</div>
+      <div><div class="t">Who Does What</div><div class="d">Responsibility matrix across the enterprise</div></div>
+      <div class="arrow">›</div></button>
+    <button class="bigcard" onclick="goTab('build')">
+      <div class="glyph" style="background:#7a4a52">✦</div>
+      <div><div class="t">Build a Capability Path</div><div class="d">Answer a few questions, get a recommended path</div></div>
+      <div class="arrow">›</div></button>
+    <h2 class="sec">More</h2>
+    <div class="grid2">
+      <button class="smallcard" onclick="goTab('organizations')"><span class="ic">▦</span><span class="t">Organizations</span></button>
+      <button class="smallcard" onclick="goTab('glossary')"><span class="ic">📖</span><span class="t">Glossary</span></button>
+      <button class="smallcard" onclick="hideHome();push('quiz')"><span class="ic">✓</span><span class="t">Training Quiz</span></button>
+      <button class="smallcard" onclick="hideHome();push('notes')"><span class="ic">🗒</span><span class="t">Saved Notes</span></button>
+    </div>
+    <div class="caveat" style="margin-top:16px">⚠️ <span>${esc(CAVEAT)}</span></div>
+    <div style="height:24px"></div>
+   </div>`;
+}
+
+/* ===================== PROCESS ===================== */
+function viewProcess(){
+  let h=`<div class="card"><h3>The Capability-Development Loop</h3><div class="muted">${esc(KEY_IDEA)}</div><div class="muted" style="margin-top:6px">Tap any step. The process is iterative — the last step feeds back into the first.</div></div>`;
+  STEPS.forEach((s,i)=>{
+    const last=i===STEPS.length-1;
+    h+=`<div class="tap" onclick="push('step',${s.n})"><div class="tl">
+      <div class="col"><div class="num">${s.n}</div>${last?'':'<div class="line"></div>'}</div>
+      <div class="body"><div class="t">${esc(s.title)}</div><div class="d">${esc(s.short)}</div></div>
+      <div class="arrow" style="align-self:center">›</div></div></div>`;
+  });
+  h+=`<div class="muted" style="display:flex;gap:8px;margin-top:4px"><span style="color:var(--accent)">↻</span> Feedback returns to Steps 1–3 — the loop continues.</div>`;
+  return h;
+}
+function viewStep(n){
+  const s=STEPS.find(x=>x.n==n);
+  const chips=s.orgs.map(l=>{const o=orgByAbbr(l);return o?`<span class="chip link tap" onclick="push('org','${o.id}')">${esc(l)} ↗</span>`:`<span class="chip">${esc(l)}</span>`;}).join("");
+  let nx=s.next.map(nn=>{const t=STEPS.find(x=>x.n===nn);return `<div class="row tap" onclick="push('step',${nn})" style="padding:6px 0"><span style="color:var(--accent);font-size:14px">${nn}. ${esc(t.title)}</span><span class="arrow">›</span></div>`;}).join("");
+  return `<span class="badge">Step ${s.n} of 13</span>
+    <h1 style="font-size:22px;margin:10px 0 8px">${esc(s.title)}</h1>
+    <p style="font-size:15px;line-height:1.5">${esc(s.detail)}</p>
+    <div class="card"><h3><span class="ic">▦</span> Primary organizations</h3><div>${chips}</div></div>
+    <div class="card"><h3><span class="ic">▣</span> Key outputs / artifacts</h3>${bullets(s.outputs)}</div>
+    <div class="card"><h3><span class="ic">⚠︎</span> Common friction points</h3>${bullets(s.friction)}</div>
+    <div class="card"><h3><span class="ic">?</span> Questions a staff officer should ask</h3>${bullets(s.q)}</div>
+    <div class="card"><h3><span class="ic">↳</span> Typically flows to</h3>${nx}</div>
+    <button class="btn sec" onclick="addNote('Process Step','Step ${s.n}: ${esc(s.title)}')">＋ Add note</button>`;
+}
+
+/* ===================== ORGANIZATIONS ===================== */
+let orgQuery="",orgCat="";
+function viewOrgs(){
+  const cats=["All",...CATS];
+  const chips=cats.map(c=>{const on=(c==="All"&&!orgCat)||c===orgCat;return `<button class="fchip ${on?'on':''}" onclick="setOrgCat('${c==='All'?'':c.replace(/'/g,"\\'")}')">${esc(c)}</button>`;}).join("");
+  let list=ORGS.filter(o=>(!orgCat||o.cat===orgCat)&&(!orgQuery||(o.name+" "+o.abbr+" "+o.cat+" "+o.role).toLowerCase().includes(orgQuery)));
+  let rows=list.map(o=>`<div class="listrow tap" onclick="push('org','${o.id}')">
+     <div class="row"><strong style="font-size:16px">${esc(o.abbr)}</strong><span class="badge">${esc(o.cat)}</span><span class="arrow">›</span></div>
+     <div class="muted" style="margin-top:4px">${esc(o.name)}</div>
+     <div class="muted" style="margin-top:2px">${esc(o.role)}</div></div>`).join("")||`<div class="empty"><div class="ic">🔍</div><div>No organizations. Try a different search or filter.</div></div>`;
+  return `<input class="search" id="orgSearch" placeholder="Search organizations" value="${esc(orgQuery)}">
+   <div class="filters">${chips}</div>${rows}`;
+}
+function wireOrgSearch(){const el=$("#orgSearch");if(el)el.oninput=e=>{orgQuery=e.target.value.toLowerCase();const sc=$("#screen");const pos=el.selectionStart;render();const n=$("#orgSearch");if(n){n.focus();n.setSelectionRange(pos,pos);}};}
+function setOrgCat(c){orgCat=c;render();}
+function viewOrg(o){
+  const rel=o.rel.map(r=>esc(r)).join(", ");
+  const steps=o.steps.map(n=>{const t=STEPS.find(x=>x.n===n);return `<div class="row tap" onclick="push('step',${n})" style="padding:6px 0"><span style="color:var(--accent);font-size:14px">${n}. ${esc(t.title)}</span><span class="arrow">›</span></div>`;}).join("");
+  return `<div class="row"><h1 style="font-size:26px;margin:0">${esc(o.abbr)}</h1><span class="badge">${esc(o.cat)}</span></div>
+    <div class="muted" style="margin:4px 0 6px;font-size:15px">${esc(o.name)}</div>
+    <p style="font-size:15px;line-height:1.5">${esc(o.role)}</p>
+    <div class="card"><h3><span class="ic">✓</span> What they own</h3>${bullets(o.owns)}</div>
+    <div class="card"><h3><span class="ic">✕</span> What they do not own</h3>${bullets(o.not)}</div>
+    <div class="card"><h3><span class="ic">⏱</span> When to involve them</h3><div style="font-size:14px">${esc(o.when)}</div></div>
+    <div class="card"><h3><span class="ic">🔗</span> Key relationships</h3><div style="font-size:14px">${rel}</div></div>
+    <div class="card"><h3><span class="ic">▣</span> Typical outputs</h3>${bullets(o.out)}</div>
+    <div class="card"><h3><span class="ic">◳</span> Related process steps</h3>${steps}</div>
+    <button class="btn sec" onclick="addNote('Organization','${esc(o.abbr)} — ${esc(o.name)}')">＋ Add note</button>`;
+}
+
+/* ===================== MATRIX ===================== */
+let mfunc="";
+function viewMatrix(){
+  const legend=Object.keys(LEVELS).map(l=>`<div class="it"><span class="ind" style="background:${LVCOLOR[l]}">${LEVELS[l]}</span>${l}</div>`).join("");
+  const chips=["All functions",...FUNCS].map(f=>{const on=(f==="All functions"&&!mfunc)||f===mfunc;return `<button class="fchip ${on?'on':''}" onclick="setMFunc('${f==='All functions'?'':f.replace(/&/g,'&amp;')}')">${esc(f)}</button>`;}).join("");
+  let body;
+  if(mfunc){
+    let rows=ORGS.map(o=>({o,lv:MATRIX[o.id][mfunc]})).filter(r=>r.lv);
+    const order={Lead:0,Support:1,Inform:2,Receive:3};
+    rows.sort((a,b)=>order[a.lv]-order[b.lv]);
+    body=`<div class="card"><h3>${esc(mfunc)}</h3>`+rows.map(r=>`<div class="row tap" onclick="push('org','${r.o.id}')" style="padding:8px 0;border-top:.5px solid var(--sep)">
+       <span class="ind" style="background:${LVCOLOR[r.lv]};width:26px;height:26px">${LEVELS[r.lv]}</span>
+       <div><div style="font-weight:600;font-size:14px">${esc(r.o.abbr)}</div><div class="tiny" style="color:${LVCOLOR[r.lv]}">${r.lv}</div></div>
+       <span class="arrow">›</span></div>`).join("")+`</div>`;
+  } else {
+    let head=`<th class="org">Org</th>`+FUNCS.map(f=>`<th>${FSHORT[f]}</th>`).join("");
+    let trs=ORGS.map(o=>{
+      let tds=FUNCS.map(f=>{const lv=MATRIX[o.id][f];return `<td>${lv?`<span class="ind" style="background:${LVCOLOR[lv]};margin:0 auto">${LEVELS[lv]}</span>`:'<span style="color:var(--text3)">·</span>'}</td>`;}).join("");
+      return `<tr><td class="org tap" onclick="push('org','${o.id}')">${esc(o.abbr)}</td>${tds}</tr>`;
+    }).join("");
+    body=`<div class="mtable"><table><thead><tr>${head}</tr></thead><tbody>${trs}</tbody></table></div>`;
+  }
+  return `<div class="card"><h3>Who Does What</h3><div class="muted">Responsibility by function. Tap a function to focus. Roles are typical and depend on authority and guidance.</div><div class="legend">${legend}</div></div>
+   <div class="filters">${chips}</div>${body}`;
+}
+function setMFunc(f){mfunc=f;render();}
+
+/* ===================== BUILD ===================== */
+let lastResult="";
+function sel(id,opts,val){return `<select id="${id}">`+opts.map(o=>`<option ${o===val?'selected':''}>${esc(o)}</option>`).join("")+`</select>`;}
+function viewBuild(){
+  const tri=["Yes","No","Unsure"];
+  return `<div class="card"><div class="muted">Answer a few questions about a hypothetical capability. The app suggests who to involve, first actions, likely artifacts, risks, and a battle rhythm. Educational aid, not authoritative guidance.</div></div>
+   <label class="field">What operational problem are you solving?</label>
+   <textarea id="b_prob" placeholder="Describe the problem (optional)"></textarea>
+   <label class="field">Warfighting function most affected</label>${sel("b_wf",WFFUNCS,"Command & Control")}
+   <label class="field">Likely solution</label>${sel("b_sol",["Materiel","Non-materiel","Both"],"Both")}
+   <label class="field">Requires Joint interoperability?</label>${sel("b_joint",tri,"Unsure")}
+   <label class="field">Is the technology mature?</label>${sel("b_tech",tri,"Unsure")}
+   <label class="field">Existing program / prototype / commercial option?</label>${sel("b_exist",tri,"Unsure")}
+   <label class="field">Needs experimentation?</label>${sel("b_exp",tri,"Yes")}
+   <label class="field">Needs new doctrine, org, training, personnel, facilities, or policy?</label>${sel("b_dot",tri,"Yes")}
+   <label class="field">Requires new funding?</label>${sel("b_fund",tri,"Yes")}
+   <label class="field">Timeline</label>${sel("b_urg",["Urgent","Deliberate"],"Deliberate")}
+   <button class="btn" onclick="generate()">✦ Generate recommended path</button><div style="height:10px"></div>`;
+}
+function dedupe(a){return [...new Set(a)];}
+function generate(){
+  const a={
+    prob:$("#b_prob").value.trim(),wf:$("#b_wf").value,sol:$("#b_sol").value,
+    joint:$("#b_joint").value,tech:$("#b_tech").value,exist:$("#b_exist").value,
+    exp:$("#b_exp").value,dot:$("#b_dot").value,fund:$("#b_fund").value,urg:$("#b_urg").value
+  };
+  const fcdMap={"Command & Control":"C2 FCD","Movement & Maneuver":"Maneuver FCD","Intelligence":"Intelligence FCD","Fires":"Fires FCD","Sustainment":"Sustainment FCD","Protection":"Protection FCD","Information / Cyber":"Cyber FCD"};
+  const fcd=fcdMap[a.wf]||"the relevant FCD";
+  let orgs=[],actions=[],arts=[],risks=[],rhythm=[];
+  orgs.push(fcd,"FCC Directorate of Concepts (DoC)");
+  actions.push(`Frame the operational problem with ${fcd} and DoC — state it as a problem, not a solution.`);
+  arts.push("Operational problem statement / capability gap");
+  if(a.sol!=="Materiel"||a.dot!=="No"){orgs.push("CAC TID (DOTMLPF-P integration)");actions.push("Engage CAC TID to test whether this is a materiel or DOTMLPF-P gap, and identify non-materiel changes.");arts.push("DOTMLPF-P implications assessment");}
+  if(a.sol!=="Non-materiel"){
+    const st=(a.wf.includes("Cyber")||a.wf.includes("Command"))?"DEVCOM C5ISR Center":"DEVCOM";
+    orgs.push(st);actions.push(`Ask ${st} for a technical feasibility and technology maturity assessment.`);arts.push("Technical feasibility assessment");
+    if(a.tech==="No")risks.push("Technology may not be mature — writing requirements too early risks an undeliverable program.");
+    if(a.exist==="Yes")actions.push("Check commercial / existing prototype options before assuming new development is required.");
+  }
+  if(a.exp!=="No"){orgs.push("JMC (experimentation)");actions.push("Coordinate with JMC to experiment with Soldiers and capture honest feedback.");arts.push("Experimentation / Soldier feedback results");}
+  else risks.push("Skipping experimentation risks committing resources to an unvalidated concept.");
+  orgs.push("TDAC (analysis)");arts.push("Operational analysis / evidence");
+  orgs.push("FCC FID","HQDA G-8 Force Development");arts.push("Requirements documentation (e.g., ICD / CDD / A-CDD)");
+  if(a.joint==="Yes"){orgs.push("Joint Staff (JCIDS / Joint validation)");actions.push("Engage the Joint Staff early — Joint interoperability shapes the validation path (e.g., JCIDS / JROC).");risks.push("Joint validation can extend timelines and add coordination overhead.");}
+  if(a.fund!=="No"){orgs.push("HQDA G-8 / PAE (resourcing)");arts.push("Affordability analysis / POM input");risks.push("A validated requirement with no resourcing path stalls — plan the POM/PPBE engagement.");}
+  if(a.sol!=="Non-materiel"){orgs.push("ASA(ALT) / PEO-PM","ATEC (test)","AMC (fielding & sustainment)");arts.push("Acquisition strategy and pathway selection","Test & evaluation and fielding plans");}
+  actions.push("Plan the feedback loop now — define how units, CTCs, and lessons-learned will refine the next cycle.");
+  arts.push("Lessons-learned / feedback plan");
+  if(a.urg==="Urgent"){rhythm=["Stand up a small cross-org working group meeting weekly.","Compress experimentation and analysis into focused sprints.","Consider faster pathways (e.g., MTA rapid prototyping / fielding, Software Acquisition Pathway) — depending on guidance.","Brief decision-makers on a short, recurring cycle to keep momentum."];risks.push("Speed pressure can tempt the team to skip evidence — keep at least minimal experimentation and analysis.");}
+  else rhythm=["Establish a monthly cross-organization sync across the involved organizations.","Sequence experimentation → analysis → requirements deliberately, with decision gates.","Align requirements maturity to the POM/PPBE calendar.","Hold a quarterly portfolio review with the PAE once acquisition is engaged."];
+  if(a.dot==="Yes")risks.push("Non-materiel changes (doctrine, training, organization) often lag materiel — assign owners early.");
+  // narrative
+  let nar=`For this problem, start with ${fcd} and the Directorate of Concepts (DoC) to frame the operational problem`;
+  if(a.sol!=="Materiel"||a.dot!=="No")nar+=", involve CAC TID for DOTMLPF-P implications";
+  if(a.sol!=="Non-materiel"){const st=(a.wf.includes("Cyber")||a.wf.includes("Command"))?"DEVCOM C5ISR":"DEVCOM";nar+=`, engage ${st} for technical feasibility`;}
+  if(a.exp!=="No")nar+=", coordinate with JMC for experimentation";
+  nar+=", use TDAC for analysis, and involve FCC FID / HQDA G-8 FD before drafting formal requirements";
+  if(a.fund!=="No")nar+=", then work resourcing through HQDA G-8 / the PAE";
+  if(a.sol!=="Non-materiel")nar+=", with ASA(ALT)/PEO-PM for acquisition, ATEC for test, and AMC for fielding and sustainment";
+  nar+=a.urg==="Urgent"?". Given urgency, compress the cycle and consider faster acquisition pathways, depending on guidance.":". Run this deliberately, aligned to the POM/PPBE calendar.";
+  nar+=" Remember: this is a loop — plan the feedback path now.";
+  orgs=dedupe(orgs);actions=dedupe(actions).slice(0,5);arts=dedupe(arts);risks=dedupe(risks);
+  const numbered=actions.map((x,i)=>`<div class="bullet"><span class="dot" style="font-weight:700">${i+1}.</span><span>${esc(x)}</span></div>`).join("");
+  lastResult=`<div class="card"><h3><span class="ic">🗺</span> Recommended approach</h3><div style="font-size:14px;line-height:1.5">${esc(nar)}</div></div>
+    <div class="card"><h3><span class="ic">▦</span> Organizations to involve</h3>${bullets(orgs)}</div>
+    <div class="card"><h3><span class="ic">№</span> First five staff actions</h3>${numbered}</div>
+    <div class="card"><h3><span class="ic">▣</span> Likely artifacts</h3>${bullets(arts)}</div>
+    <div class="card"><h3><span class="ic">⚠︎</span> Key risks</h3>${bullets(risks)}</div>
+    <div class="card"><h3><span class="ic">📅</span> Recommended battle rhythm</h3>${bullets(rhythm)}</div>
+    <div class="muted">Reminder: capability development is a loop. Plan the feedback path from the start. Verify current authorities and guidance.</div>
+    <button class="btn sec" onclick="addNote('Capability Path','Path: ${esc((a.prob||a.wf).slice(0,50))}')">＋ Save as note</button>`;
+  push("result");
+}
+
+/* ===================== GLOSSARY ===================== */
+let glossQuery="";
+function viewGlossary(){
+  let list=GLOSS.filter(g=>!glossQuery||(g.t+" "+g.d).toLowerCase().includes(glossQuery)).sort((a,b)=>a.t.localeCompare(b.t));
+  let rows=list.map(g=>`<div class="listrow tap" onclick="push('term','${encodeURIComponent(g.t)}')"><strong>${esc(g.t)}</strong><div class="muted" style="margin-top:3px">${esc(g.d)}</div></div>`).join("")||`<div class="empty"><div class="ic">🔍</div><div>No terms found.</div></div>`;
+  return `<input class="search" id="glossSearch" placeholder="Search terms" value="${esc(glossQuery)}">${rows}`;
+}
+function wireGlossSearch(){const el=$("#glossSearch");if(el)el.oninput=e=>{glossQuery=e.target.value.toLowerCase();const pos=el.selectionStart;render();const n=$("#glossSearch");if(n){n.focus();n.setSelectionRange(pos,pos);}};}
+function viewTerm(enc){
+  const t=decodeURIComponent(enc);const g=GLOSS.find(x=>x.t===t);
+  return `<h1 style="font-size:26px;margin:6px 0 14px">${esc(g.t)}</h1>
+   <div class="card"><h3><span class="ic">≡</span> Plain-English definition</h3><div style="font-size:15px;line-height:1.5">${esc(g.d)}</div></div>
+   <div class="card"><h3><span class="ic">★</span> Why it matters</h3><div style="font-size:14px;line-height:1.5">${esc(g.w)}</div></div>
+   <div class="card"><h3><span class="ic">❝</span> Example</h3><div class="muted" style="font-style:italic;font-size:14px">“${esc(g.e)}”</div></div>
+   <button class="btn sec" onclick="addNote('Glossary Term','Glossary: ${esc(g.t)}')">＋ Add note</button>`;
+}
+
+/* ===================== QUIZ ===================== */
+let qi=0,qsel=null,qans=false,qscore=0,qdone=false;
+function viewQuiz(){
+  if(qdone){
+    const ratio=qscore/QUIZ.length;
+    const msg=ratio>=0.9?"Excellent — you have a strong grasp of the ecosystem.":ratio>=0.7?"Solid. Review the steps you missed and try again.":"Good start. Explore the Process and Organizations screens, then retry.";
+    return `<div class="empty"><div style="font-size:54px">🏅</div><h2>You scored ${qscore} of ${QUIZ.length}</h2><div class="muted">${esc(msg)}</div></div><button class="btn" onclick="qreset()">↺ Try again</button>`;
+  }
+  const q=QUIZ[qi];
+  let opts=q.o.map((o,i)=>{
+    let cls="opt",mk="";
+    if(qans){if(i===q.a){cls+=" correct";mk='<span class="mk">✓</span>';}else if(i===qsel){cls+=" wrong";mk='<span class="mk">✕</span>';}}
+    return `<div class="${cls}" onclick="qpick(${i})"><span>${esc(o)}</span>${mk}</div>`;
+  }).join("");
+  let fb=qans?`<div class="card"><h3 style="color:${qsel===q.a?'#34a853':'var(--warn)'}">${qsel===q.a?'✓ Correct':'ℹ︎ Not quite'}</h3><div style="font-size:14px;line-height:1.5">${esc(q.x)}</div></div>
+    <button class="btn" onclick="qnext()">${qi===QUIZ.length-1?'See results':'Next question'}</button>`:"";
+  return `<div class="row"><span class="badge">${esc(q.c)}</span><span class="tiny" style="margin-left:auto">Question ${qi+1} of ${QUIZ.length}</span></div>
+   <div class="progress"><i style="width:${(qi/QUIZ.length)*100}%"></i></div>
+   <h2 style="font-size:18px;line-height:1.4">${esc(q.p)}</h2>${opts}${fb}`;
+}
+function qpick(i){if(qans)return;qsel=i;qans=true;if(i===QUIZ[qi].a)qscore++;render();}
+function qnext(){if(qi===QUIZ.length-1){qdone=true;}else{qi++;qsel=null;qans=false;}render();}
+function qreset(){qi=0;qsel=null;qans=false;qscore=0;qdone=false;render();}
+
+/* ===================== NOTES ===================== */
+function getNotes(){try{return JSON.parse(localStorage.getItem("cf_notes")||"[]");}catch(e){return [];}}
+function saveNotes(n){localStorage.setItem("cf_notes",JSON.stringify(n));}
+function addNote(kind,label){
+  const body=prompt(`New note · ${label}\n\nType your note:`);
+  if(body===null)return;
+  const notes=getNotes();
+  notes.unshift({id:Date.now(),kind,label,body,date:new Date().toLocaleDateString()});
+  saveNotes(notes);
+  alert("Saved to Notes.");
+}
+function delNote(id){if(!confirm("Delete this note?"))return;saveNotes(getNotes().filter(n=>n.id!==id));render();}
+function viewNotes(){
+  const notes=getNotes();
+  if(!notes.length)return `<div class="empty"><div class="ic">🗒</div><div>No notes yet.</div><div class="muted" style="margin-top:6px">Save notes from any process step, organization, glossary term, or capability path. They stay on this device.</div></div>`;
+  return notes.map(n=>`<div class="listrow"><div class="row"><strong>${esc(n.label)}</strong><span class="badge" style="margin-left:auto">${esc(n.kind)}</span></div>
+    <div style="font-size:14px;margin-top:6px;white-space:pre-wrap">${esc(n.body)}</div>
+    <div class="row" style="margin-top:8px"><span class="tiny">${esc(n.date)}</span><button class="navbtn right" style="margin-left:auto;color:#ea4335" onclick="delNote(${n.id})">Delete</button></div></div>`).join("");
+}
+
+/* ===================== INIT ===================== */
+render();
+showHome();
+</script>
+</body>
+</html>
