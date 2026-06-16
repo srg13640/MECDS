@@ -1,0 +1,38 @@
+name: iOS Build
+
+# Builds Capability Flow on a macOS runner so the app is compile-checked in CI.
+# Builds for the iOS Simulator with code signing disabled (no Apple account needed).
+
+on:
+  push:
+    branches:
+      - "claude/**"
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build (iOS Simulator)
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list runtimes || true
+
+      - name: Build for iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project CapabilityFlow.xcodeproj \
+            -scheme CapabilityFlow \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build
