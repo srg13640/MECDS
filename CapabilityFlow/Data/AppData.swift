@@ -475,8 +475,8 @@ struct AppData {
             name: "Army Test and Evaluation Command",
             abbreviation: "ATEC",
             category: .test,
-            plainEnglishRole: "Independently tests and evaluates capabilities for effectiveness, suitability, and safety.",
-            owns: ["Operational test", "Independent evaluation", "Safety releases"],
+            plainEnglishRole: "A Direct Reporting Unit reporting to the Chief of Staff of the Army, headquartered at Aberdeen Proving Ground. Plans, integrates, and conducts experiments, developmental testing, independent operational testing, and independent evaluations and assessments to inform acquisition decision-makers and commanders.",
+            owns: ["Developmental and independent operational test", "Independent evaluation and assessment", "Safety releases"],
             doesNotOwn: ["Requirements", "Acquisition", "Resourcing"],
             keyRelationships: ["PEOs", "PMs", "PAE test integrators", "Operational units", "TDAC"],
             typicalOutputs: ["Test data", "Evaluation reports", "Safety releases"],
@@ -497,11 +497,24 @@ struct AppData {
             relatedProcessSteps: ["s6", "s11", "s12", "s13"]
         ),
         Organization(
+            id: "ascc",
+            name: "Army Service Component Commands",
+            abbreviation: "ASCCs",
+            category: .operational,
+            plainEnglishRole: "The Army's theater-level commands assigned to combatant commands — ARCYBER, ARTRANS, USARCENT, USAREUR-AF, USARPAC, USASMDC, USASOC, and USAWHC. They employ fielded capabilities in theater and are a key source of operational feedback.",
+            owns: ["Army operations in their combatant command's area of responsibility", "Theater employment of fielded capabilities", "Operational feedback from theater"],
+            doesNotOwn: ["Requirements", "Acquisition", "Resourcing"],
+            keyRelationships: ["CCMDs", "HQDA", "AMC", "Gaining units", "FCC"],
+            typicalOutputs: ["Theater operational feedback", "Employment insights", "Lessons learned"],
+            whenToInvolve: "When fielding into a theater and when capturing operational feedback from employment.",
+            relatedProcessSteps: ["s12", "s13"]
+        ),
+        Organization(
             id: "amc",
             name: "Army Materiel Command / Sustainment Enterprise",
             abbreviation: "AMC",
             category: .sustainment,
-            plainEnglishRole: "Leads materiel readiness, fielding logistics, and lifecycle sustainment.",
+            plainEnglishRole: "An Army Command headquartered at Redstone Arsenal that provides superior technology, acquisition support, and logistics to ensure dominant land force capability — leading materiel readiness, fielding logistics, and lifecycle sustainment.",
             owns: ["Materiel readiness", "Fielding logistics", "Lifecycle sustainment"],
             doesNotOwn: ["Requirements", "Acquisition program decisions", "Operational test"],
             keyRelationships: ["ASC", "PEOs/PMs", "Gaining units", "CAC"],
@@ -545,7 +558,9 @@ struct AppData {
         GlossaryTerm(id: "atec", term: "ATEC", definition: "Army Test and Evaluation Command — independently tests and evaluates capabilities.", whyItMatters: "Independent test protects Soldiers and decision-makers from unvalidated claims.", example: "ATEC's independent evaluation informed the fielding decision."),
         GlossaryTerm(id: "tdac", term: "TDAC", definition: "Transformation Decision Analysis Center — delivers objective, timely analysis (systems and formation effectiveness, modeling and simulation, scenarios) to inform Army decisions; operates under FCC.", whyItMatters: "It turns observations and data into rigorous, defensible evidence.", example: "TDAC's analysis showed the formation effect the capability would produce."),
         GlossaryTerm(id: "fcd", term: "FCD", definition: "Future Capability Directorate — one of nine FCC directorates (Aviation, C2, Cyber, Fires, FBLP, Intelligence, Maneuver, Medical, Sustainment) that drive functional transformation by informing concepts, requirements, and experimentation. Formed from the former CDIDs and cross-functional teams.", whyItMatters: "FCDs are where functional capability problems get owned and framed.", example: "The C2 FCD owned the command-and-control problem."),
-        GlossaryTerm(id: "t2com", term: "T2COM", definition: "Transformation and Training Command — established in 2025 by consolidating Army Futures Command and TRADOC; the higher headquarters of FCC.", whyItMatters: "It connects concepts, doctrine, training, and transformation under one command.", example: "T2COM helped frame the future-force context."),
+        GlossaryTerm(id: "t2com", term: "T2COM", definition: "Transformation and Training Command — an Army Command headquartered in Austin, TX, established in 2025 by consolidating Army Futures Command and TRADOC. Integrates and synchronizes force generation, force development, and force design; higher headquarters of FCC.", whyItMatters: "It connects concepts, doctrine, training, and transformation under one command.", example: "T2COM helped frame the future-force context."),
+
+        GlossaryTerm(id: "ascc", term: "ASCC", definition: "Army Service Component Command — the Army's theater-level command assigned to a combatant command (the eight ASCCs: ARCYBER, ARTRANS, USARCENT, USAREUR-AF, USARPAC, USASMDC, USASOC, USAWHC).", whyItMatters: "ASCCs are where fielded capabilities are employed in theater and where much operational feedback originates.", example: "The ASCC's theater feedback shaped the next iteration of the capability."),
         GlossaryTerm(id: "fcc", term: "FCC", definition: "Futures and Concepts Command — designs the future force through four core functions (concepts, experimentation, requirements, integration), subordinate to T2COM.", whyItMatters: "It is the front of the capability-development ecosystem, aimed at the Army needed 5 to 15 years out.", example: "The FCC framed the operational problem before requirements work began."),
         GlossaryTerm(id: "cactid", term: "CAC TID", definition: "CAC Training and Integration Directorate — integrates DOTMLPF-P implications across proponents.", whyItMatters: "It keeps non-materiel solutions and integration from being overlooked.", example: "CAC TID flagged the training and doctrine implications early."),
         GlossaryTerm(id: "devcom", term: "DEVCOM", definition: "Combat Capabilities Development Command — the Army's primary science and technology organization.", whyItMatters: "It tells you whether a solution is technically feasible and mature.", example: "DEVCOM assessed feasibility and built an early prototype."),
@@ -636,6 +651,7 @@ extension AppData {
             ("pm", [(.acquisition, .support), (.testing, .support), (.fielding, .lead)]),
             ("atec", [(.testing, .lead), (.analysis, .support)]),
             ("units", [(.experimentation, .support), (.testing, .support), (.fielding, .receive), (.feedback, .lead)]),
+            ("ascc", [(.fielding, .receive), (.feedback, .support)]),
             ("amc", [(.fielding, .lead), (.feedback, .inform)])
         ]
         return data.flatMap { orgId, pairs in
