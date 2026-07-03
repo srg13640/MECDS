@@ -130,7 +130,7 @@ enum RecommendationEngine {
         case "Intelligence": return "Intelligence FCD"
         case "Fires": return "Fires FCD"
         case "Sustainment": return "Sustainment FCD"
-        case "Protection": return "Protection FCD"
+        case "Protection": return "FBLP FCD"
         case "Information / Cyber": return "Cyber FCD"
         default: return "the relevant FCD"
         }
