@@ -64,6 +64,14 @@ struct GlossaryDetailView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
+                if let basis = term.statutoryBasis {
+                    CardContainer {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("Statutory basis", systemImage: "building.columns").font(.headline)
+                            Text(basis).font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
             }
             .padding(20)
         }

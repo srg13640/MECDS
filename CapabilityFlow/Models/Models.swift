@@ -55,6 +55,8 @@ struct Organization: Identifiable, Codable, Hashable {
     let whenToInvolve: String
     /// IDs of related process steps for internal deep linking.
     let relatedProcessSteps: [String]
+    /// Optional statutory or authoritative source citation (e.g. "10 U.S.C. §7016").
+    var statutoryBasis: String? = nil
 
     /// Searchable text blob.
     var searchText: String {
@@ -69,6 +71,8 @@ struct GlossaryTerm: Identifiable, Codable, Hashable {
     let definition: String
     let whyItMatters: String
     let example: String
+    /// Optional statutory or authoritative source citation (e.g. "10 U.S.C. §181").
+    var statutoryBasis: String? = nil
 
     var searchText: String {
         "\(term) \(definition)".lowercased()

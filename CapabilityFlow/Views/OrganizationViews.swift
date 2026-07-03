@@ -131,6 +131,15 @@ struct OrganizationDetailView: View {
                 CardContainer { BulletSection(title: "Key relationships", items: org.keyRelationships, systemImage: "link") }
                 CardContainer { BulletSection(title: "Typical outputs", items: org.typicalOutputs, systemImage: "doc.text") }
 
+                if let basis = org.statutoryBasis {
+                    CardContainer {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("Statutory basis", systemImage: "building.columns").font(.headline)
+                            Text(basis).font(.subheadline).fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+
                 // Related process steps (deep links).
                 if !org.relatedProcessSteps.isEmpty {
                     CardContainer {
