@@ -1,0 +1,31 @@
+Source: https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title10-chapter221&num=0&edition=prelim; retrieved 2026-07-03.
+
+
+
+10 USC Chapter 221 note
+
+
+
+Middle Tier of Acquisition for Rapid Prototyping and Rapid Fielding
+
+Pub. L. 116–92, div. A, title VIII, §837, Dec. 20, 2019, 133 Stat. 1497, provided that:
+
+"(a) Report.—Not later than December 15, 2019, the Under Secretary of Defense for Acquisition and Sustainment shall submit to the congressional defense committees [Committees on Armed Services and Appropriations of the Senate and the House of Representatives] a report that includes the guidance required under [former] section 804(a) of the National Defense Authorization Act for Fiscal Year 2016 (Public Law 114–92; 10 U.S.C. 2302 note [former 10 U.S.C. 3201 note prec., formerly set out below] [see 10 U.S.C. 3602(a)]). The Under Secretary of Defense for Acquisition and Sustainment shall ensure such guidance includes the business case elements required by an acquisition program established pursuant to such guidance and the metrics required to assess the performance of such a program.
+
+"(b) Limitation.—
+
+  "(1) In general.—Beginning on December 15, 2019, if the Under Secretary of Defense for Acquisition and Sustainment has not submitted the report required under subsection (a), not more than 75 percent of the funds specified in paragraph (2) may be obligated or expended until the date on which the report required under subsection (a) has been submitted.
+
+  "(2) Funds specified.—The funds specified in this paragraph are the funds authorized to be appropriated by this Act or otherwise made available for fiscal year 2020 for the Department of Defense that remain unobligated as of December 15, 2019, for the following:
+
+    "(A) The execution of any acquisition program established pursuant to the guidance required under such [former] section 804(a) [see 10 U.S.C. 3602(a)].
+
+    "(B) The operations of the Office of the Under Secretary of Defense for Research & Engineering.
+
+    "(C) The operations of the Office of the Under Secretary of Defense for Acquisition & Sustainment.
+
+    "(D) The operations of the Office of the Director of Cost Analysis and Program Evaluation.
+
+    "(E) The operations of the offices of the service acquisition executives of the military departments."
+
+Pub. L. 114–92, div. A, title VIII, §804, Nov. 25, 2015, 129 Stat. 882, as amended by Pub. L. 114–328, div. A, title VIII, §§849(a), 864(b), 897, title X, §1081(c)(2), Dec. 23, 2016, 130 Stat. 2293, 2304, 2327, 2419; Pub. L. 115–91, div. A, title VIII, §866, Dec. 12, 2017, 131 Stat. 1495; Pub. L. 116–92, div. A, title IX, §902(33), Dec. 20, 2019, 133 Stat. 1546; Pub. L. 116–283, div. A, title VIII, §805, Jan. 1, 2021, 134 Stat. 3742, which authorized the Under Secretary of Defense for Acquisition and Sustainment, in consultation with the Comptroller of the Department of Defense and the Vice Chairman of the Joint Chiefs of Staff, to establish guidance for a middle tier of acquisition programs covering rapid prototyping and rapid fielding pathways, was repealed by Pub. L. 118–159, div. A, title VIII, §804(b), Dec. 23, 2024, 138 Stat. 1968. See section 3602 of this title.
