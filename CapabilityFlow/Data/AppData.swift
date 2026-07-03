@@ -195,7 +195,8 @@ struct AppData {
             keyRelationships: ["T2COM (higher headquarters)", "CAC", "HQDA G-8", "ASA(ALT)", "DEVCOM", "JMC", "TDAC"],
             typicalOutputs: ["Concepts", "Capability gaps", "Requirements documentation", "Experimentation campaigns"],
             whenToInvolve: "Early — whenever a future operational problem or capability gap is being framed.",
-            relatedProcessSteps: ["s2", "s3", "s6", "s8", "s13"]
+            relatedProcessSteps: ["s2", "s3", "s6", "s8", "s13"],
+            statutoryBasis: "Why FCC informs requirements but does not execute acquisition: 10 U.S.C. §7014(c)(1) reserves the acquisition function to the Office of the Secretary of the Army (ASA(ALT)), and 10 U.S.C. §7013(b)(4) makes the Secretary of the Army responsible for equipping, including research and development."
         ),
         Organization(
             id: "doc",
@@ -390,7 +391,8 @@ struct AppData {
             keyRelationships: ["FCC FID", "HQDA G-8 PAE", "ASA(ALT)"],
             typicalOutputs: ["Validated requirements", "Force development integration products"],
             whenToInvolve: "Before formal requirements are finalized and as they enter resourcing.",
-            relatedProcessSteps: ["s8", "s9"]
+            relatedProcessSteps: ["s8", "s9"],
+            statutoryBasis: "The Army Staff exists to assist the Secretary of the Army (10 U.S.C. §7031). Note the contrast: under 10 U.S.C. §7014(c)(1), acquisition itself is reserved to the Office of the Secretary — which is why G-8 shapes requirements and resourcing but does not execute acquisition."
         ),
         Organization(
             id: "g8pae",
@@ -416,7 +418,8 @@ struct AppData {
             keyRelationships: ["PAEs", "CPEs", "PEOs", "PMs", "HQDA G-8"],
             typicalOutputs: ["Acquisition policy", "Acquisition decisions"],
             whenToInvolve: "When the problem moves toward acquisition strategy and execution.",
-            relatedProcessSteps: ["s10", "s13"]
+            relatedProcessSteps: ["s10", "s13"],
+            statutoryBasis: "10 U.S.C. §7016(b)(5): the ASA(ALT)'s principal duty is 'the overall supervision of acquisition, technology, and logistics matters of the Department of the Army.' Under 10 U.S.C. §7014(c)(1), the Office of the Secretary of the Army has sole responsibility for the acquisition function."
         ),
         Organization(
             id: "pae",
@@ -481,7 +484,8 @@ struct AppData {
             keyRelationships: ["PEOs", "PMs", "PAE test integrators", "Operational units", "TDAC"],
             typicalOutputs: ["Test data", "Evaluation reports", "Safety releases"],
             whenToInvolve: "When a capability must be tested and independently evaluated before scaling.",
-            relatedProcessSteps: ["s7", "s11"]
+            relatedProcessSteps: ["s7", "s11"],
+            statutoryBasis: "Independent test is statutory: under 10 U.S.C. §4171, covered major defense acquisition programs may not proceed beyond low-rate initial production until initial operational test and evaluation is complete; 10 U.S.C. §4172 requires survivability and lethality testing before full-scale production."
         ),
         Organization(
             id: "units",
@@ -549,13 +553,13 @@ struct AppData {
         GlossaryTerm(id: "pom", term: "POM", definition: "Program Objective Memorandum — the Army's multi-year program and funding proposal.", whyItMatters: "If a capability is not in the POM, it is generally not funded.", example: "The team worked to get the capability into the next POM."),
         GlossaryTerm(id: "fydp", term: "FYDP", definition: "Future Years Defense Program — the multi-year projection of DoD programs and funding.", whyItMatters: "It shows whether a capability is affordable across the planning horizon.", example: "The affordability analysis checked how the program fit within the FYDP."),
         GlossaryTerm(id: "asarc", term: "ASARC", definition: "Army Systems Acquisition Review Council — a senior Army acquisition decision forum.", whyItMatters: "It is a key oversight body for major Army acquisition decisions.", example: "The program prepared for its ASARC milestone review."),
-        GlossaryTerm(id: "mta", term: "MTA", definition: "Middle Tier of Acquisition — a pathway for rapid prototyping or rapid fielding.", whyItMatters: "It lets the Army move faster than the traditional acquisition pathway when appropriate.", example: "The team used the MTA rapid-prototyping pathway to move quickly."),
-        GlossaryTerm(id: "swp", term: "Software Acquisition Pathway", definition: "An acquisition pathway designed for the continuous, iterative delivery of software.", whyItMatters: "Software needs frequent updates; this pathway fits that reality better than hardware-style milestones.", example: "Because the capability was software-centric, the PM used the Software Acquisition Pathway."),
+        GlossaryTerm(id: "mta", term: "MTA", definition: "Middle Tier of Acquisition — statutory pathways for rapid prototyping and rapid fielding, for programs intended to be completed within two to five years.", whyItMatters: "It lets the Army move faster than the traditional acquisition pathway when appropriate.", example: "The team used the MTA rapid-prototyping pathway to move quickly.", statutoryBasis: "10 U.S.C. §3602 — directs establishment of two middle-tier pathways (rapid prototyping and rapid fielding) for programs intended to be completed in two to five years."),
+        GlossaryTerm(id: "swp", term: "Software Acquisition Pathway", definition: "A statutory acquisition pathway designed for the continuous, iterative delivery of software.", whyItMatters: "Software needs frequent updates; this pathway fits that reality better than hardware-style milestones.", example: "Because the capability was software-centric, the PM used the Software Acquisition Pathway.", statutoryBasis: "10 U.S.C. §3603 — directs the Secretary of Defense to establish software acquisition pathways for efficient and effective acquisition, development, integration, and timely delivery of software."),
         GlossaryTerm(id: "pae", term: "PAE", definition: "Portfolio Acquisition Executive — accountable for a portfolio of capabilities and trade-offs across it.", whyItMatters: "It introduces portfolio-level accountability alongside individual program execution.", example: "The PAE balanced investment across the portfolio rather than program by program."),
         GlossaryTerm(id: "cpe", term: "CPE", definition: "Capability Program Executive — leads execution of a specific capability program area within a portfolio.", whyItMatters: "It provides focused execution leadership under the portfolio.", example: "The CPE drove execution of the capability program."),
         GlossaryTerm(id: "peo", term: "PEO", definition: "Program Executive Office — executes a group of acquisition programs and supervises PMs.", whyItMatters: "It is where acquisition delivery is managed day to day.", example: "The PEO oversaw several PMs delivering related systems."),
         GlossaryTerm(id: "pm", term: "PM", definition: "Product or Project Manager — owns cost, schedule, and performance of a program or product.", whyItMatters: "The PM is who actually delivers the system.", example: "The PM was accountable for delivering on cost and schedule."),
-        GlossaryTerm(id: "atec", term: "ATEC", definition: "Army Test and Evaluation Command — independently tests and evaluates capabilities.", whyItMatters: "Independent test protects Soldiers and decision-makers from unvalidated claims.", example: "ATEC's independent evaluation informed the fielding decision."),
+        GlossaryTerm(id: "atec", term: "ATEC", definition: "Army Test and Evaluation Command — independently tests and evaluates capabilities.", whyItMatters: "Independent test protects Soldiers and decision-makers from unvalidated claims.", example: "ATEC's independent evaluation informed the fielding decision.", statutoryBasis: "10 U.S.C. §4171 conditions proceeding beyond low-rate initial production on completed initial operational test and evaluation; §4172 requires survivability and lethality testing before full-scale production."),
         GlossaryTerm(id: "tdac", term: "TDAC", definition: "Transformation Decision Analysis Center — delivers objective, timely analysis (systems and formation effectiveness, modeling and simulation, scenarios) to inform Army decisions; operates under FCC.", whyItMatters: "It turns observations and data into rigorous, defensible evidence.", example: "TDAC's analysis showed the formation effect the capability would produce."),
         GlossaryTerm(id: "fcd", term: "FCD", definition: "Future Capability Directorate — one of nine FCC directorates (Aviation, C2, Cyber, Fires, FBLP, Intelligence, Maneuver, Medical, Sustainment) that drive functional transformation by informing concepts, requirements, and experimentation. Formed from the former CDIDs and cross-functional teams.", whyItMatters: "FCDs are where functional capability problems get owned and framed.", example: "The C2 FCD owned the command-and-control problem."),
         GlossaryTerm(id: "t2com", term: "T2COM", definition: "Transformation and Training Command — an Army Command headquartered in Austin, TX, established in 2025 by consolidating Army Futures Command and TRADOC. Integrates and synchronizes force generation, force development, and force design; higher headquarters of FCC.", whyItMatters: "It connects concepts, doctrine, training, and transformation under one command.", example: "T2COM helped frame the future-force context."),
