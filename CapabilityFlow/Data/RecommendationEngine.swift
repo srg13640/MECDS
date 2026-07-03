@@ -62,8 +62,8 @@ enum RecommendationEngine {
 
         // 7. Joint.
         if a.jointInteroperability == .yes {
-            orgs.append("Joint Staff (JCIDS / Joint validation)")
-            actions.append("Engage the Joint Staff early — Joint interoperability shapes the validation path (e.g., JCIDS / JROC).")
+            orgs.append("Joint Staff (JFRP engagement)")
+            actions.append("Engage the Joint Staff early — Joint interoperability shapes the JFRP path (JROC focuses on joint operational problems; Service-specific validation stays with the Army via the AROC).")
             risks.append("Joint validation can extend timelines and add coordination overhead.")
         }
 
