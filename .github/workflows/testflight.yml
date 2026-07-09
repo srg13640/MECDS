@@ -26,11 +26,15 @@ jobs:
         run: xcodebuild -version
 
       - name: Install App Store Connect API key
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
         run: |
-          mkdir -p ~/private_keys
-          cat > ~/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 <<'EOF'
-          ${{ secrets.ASC_PRIVATE_KEY }}
-          EOF
+          mkdir -p "$HOME/private_keys"
+          printf '%s\n' "$ASC_PRIVATE_KEY" > "$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          # Non-sensitive sanity check: PEM header + line count only.
+          echo "Key first line: $(head -1 "$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8")"
+          echo "Key line count: $(wc -l < "$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8")"
 
       - name: Archive
         run: |
@@ -42,7 +46,7 @@ jobs:
             -destination 'generic/platform=iOS' \
             -archivePath "$RUNNER_TEMP/CapabilityFlow.xcarchive" \
             -allowProvisioningUpdates \
-            -authenticationKeyPath ~/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
+            -authenticationKeyPath "$HOME/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8" \
             -authenticationKeyID ${{ secrets.ASC_KEY_ID }} \
             -authenticationKeyIssuerID ${{ secrets.ASC_ISSUER_ID }} \
             DEVELOPMENT_TEAM=${{ secrets.ASC_TEAM_ID }} \
@@ -69,7 +73,7 @@ jobs:
             -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
             -exportPath "$RUNNER_TEMP/export" \
             -allowProvisioningUpdates \
-            -authenticationKeyPath ~/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
+            -authenticationKeyPath "$HOME/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8" \
             -authenticationKeyID ${{ secrets.ASC_KEY_ID }} \
             -authenticationKeyIssuerID ${{ secrets.ASC_ISSUER_ID }}
 
