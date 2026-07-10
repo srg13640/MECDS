@@ -31,11 +31,17 @@ jobs:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
         run: |
           mkdir -p "$HOME/private_keys"
-          # Secret is stored as single-line base64 to avoid multi-line paste corruption.
-          printf '%s' "$ASC_PRIVATE_KEY_B64" | openssl base64 -d -A > "$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8"
-          # Non-sensitive sanity check: PEM header + line count only (expect 6 lines).
-          echo "Key first line: $(head -1 "$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8")"
-          echo "Key line count: $(wc -l < "$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8")"
+          KEY_PATH="$HOME/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          # Strip ALL whitespace/newlines from the base64 secret before decoding,
+          # so stray characters from pasting can't corrupt the PEM.
+          printf '%s' "$ASC_PRIVATE_KEY_B64" | tr -d '[:space:]' | openssl base64 -d -A > "$KEY_PATH"
+          # Non-sensitive diagnostic (decoded content is not the secret value).
+          echo "Decoded key -> first: $(head -1 "$KEY_PATH") | lines: $(wc -l < "$KEY_PATH") | bytes: $(wc -c < "$KEY_PATH")"
+          if ! head -1 "$KEY_PATH" | grep -q 'BEGIN PRIVATE KEY'; then
+            echo "::error::ASC_PRIVATE_KEY_B64 did not decode to a valid PEM key. Re-generate: openssl base64 -A -in AuthKey_XXXX.p8 | pbcopy, then update the secret."
+            exit 1
+          fi
+          echo "Key decoded OK."
 
       - name: Archive (unsigned)
         run: |
